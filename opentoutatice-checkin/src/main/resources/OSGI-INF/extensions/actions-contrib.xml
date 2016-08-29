@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<component name="fr.toutatice.ecm.platform.checkin.actions">
+
+	<require>org.nuxeo.ecm.platform.actions.ActionService</require>
+
+	<extension target="org.nuxeo.ecm.platform.actions.ActionService"
+		point="actions">
+		
+		<!-- Réserver -->
+		<action id="CHECKIN_CURRANT_DOC" label="checkin.action"
+            link="#{checkinActions.checkin()}" order="10">
+            <category>TOUTATICE_EDIT_DOCUMENT_FORM</category>
+			<filter-id>is_not_thread_document</filter-id>
+			<filter-id>dont_belong_to_publish_space</filter-id>
+			<filter-id>is_not_draft_doc</filter-id>
+        </action>
+        
+		<!-- Relâcher -->
+		<action id="RELEASE_CURRANT_DOC" label="release.action"
+            link="#{checkinActions.release()}" order="10">
+            <category>TOUTATICE_EDIT_DOCUMENT_FORM</category>
+			<filter-id>is_not_thread_document</filter-id>
+			<filter-id>dont_belong_to_publish_space</filter-id>
+			<filter-id>is_draft_doc</filter-id>
+        </action>
+        
+		<!-- Relâcher -->
+		<action id="CANCEL_CHECKIN_CURRENT_ODC" label="cancel.checkin.action"
+            link="#{checkinActions.cancelCheckin()}" order="10">
+            <category>TOUTATICE_EDIT_DOCUMENT_FORM</category>
+			<filter-id>is_not_thread_document</filter-id>
+			<filter-id>dont_belong_to_publish_space</filter-id>
+			<filter-id>is_draft_doc</filter-id>
+        </action>        
+        
+	</extension>
+
+	<extension target="org.nuxeo.ecm.platform.actions.ActionService"
+		point="filters">
+
+		<filter id="is_draft_doc">
+			<rule grant="true">
+				<condition>#{checkinActions.isDraftDocument()}
+				</condition>
+			</rule>
+		</filter>
+		<filter id="is_not_draft_doc">
+			<rule grant="false">
+				<condition>#{checkinActions.isDraftDocument()}
+				</condition>
+			</rule>
+		</filter>		
+	</extension>
+</component>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<component name="fr.toutatice.ecm.checkin.infos.provider" version="1.0">
+
+	<require>fr.toutatice.ecm.platform.core.services.infos.provider</require>
+	
+	<extension target="fr.toutatice.ecm.platform.core.services.infos.provider"
+    	point="fetch_infos">
+    	
+    	<fetchInfos name="checkedinInfosProvider" class="fr.toutatice.ecm.checkin.CheckinInfosProvider" />
+    	
+    </extension>
+</component>
