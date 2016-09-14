@@ -1,37 +1,35 @@
 <?xml version="1.0"?>
 <component name="fr.toutatice.ecm.platform.checkin.actions">
 
-	<require>org.nuxeo.ecm.platform.actions.ActionService</require>
+	<require>fr.toutatice.ecm.platform.checkin.types</require>
 
 	<extension target="org.nuxeo.ecm.platform.actions.ActionService"
 		point="actions">
 		
-		<!-- Réserver -->
-		<action id="CHECKIN_CURRANT_DOC" label="checkin.action"
-            link="#{checkinActions.checkin()}" order="10">
+		 <!-- Creation -->      
+        <action id="CREATE_N_CHECKIN_CURRENT_DOC" label="ottc.create.checkin.action"
+            link="#{checkinActions.createNCheckin()}" order="30">
+            <category>TOUTATICE_CREATE_DOCUMENT_FORM</category>
+            <filter-id>dont_belong_to_publish_space</filter-id>
+            <filter-id>creating_Note</filter-id>
+        </action>
+		
+		<!-- Checkin -->
+		<action id="CHECKIN_CURRENT_DOC" label="ottc.checkin.action"
+            link="#{checkinActions.checkin()}" order="30">
             <category>TOUTATICE_EDIT_DOCUMENT_FORM</category>
-			<filter-id>is_not_thread_document</filter-id>
-			<filter-id>dont_belong_to_publish_space</filter-id>
-			<filter-id>is_not_draft_doc</filter-id>
+            <filter-id>dont_belong_to_publish_space</filter-id>
+            <filter-id>is_Note</filter-id>
+            <filter-id>is_not_draft_doc</filter-id>
         </action>
         
-		<!-- Relâcher -->
-		<action id="RELEASE_CURRANT_DOC" label="release.action"
-            link="#{checkinActions.release()}" order="10">
+		<!-- Checkout -->
+		<action id="CHECKOUT_CURRENT_DOC" label="ottc.checkout.action"
+            link="#{checkinActions.checkout()}" order="30">
             <category>TOUTATICE_EDIT_DOCUMENT_FORM</category>
-			<filter-id>is_not_thread_document</filter-id>
 			<filter-id>dont_belong_to_publish_space</filter-id>
 			<filter-id>is_draft_doc</filter-id>
         </action>
-        
-		<!-- Relâcher -->
-		<action id="CANCEL_CHECKIN_CURRENT_ODC" label="cancel.checkin.action"
-            link="#{checkinActions.cancelCheckin()}" order="10">
-            <category>TOUTATICE_EDIT_DOCUMENT_FORM</category>
-			<filter-id>is_not_thread_document</filter-id>
-			<filter-id>dont_belong_to_publish_space</filter-id>
-			<filter-id>is_draft_doc</filter-id>
-        </action>        
         
 	</extension>
 
@@ -40,15 +38,27 @@
 
 		<filter id="is_draft_doc">
 			<rule grant="true">
-				<condition>#{checkinActions.isDraftDocument()}
-				</condition>
+				<facet>OttcDraft</facet>
 			</rule>
 		</filter>
 		<filter id="is_not_draft_doc">
 			<rule grant="false">
-				<condition>#{checkinActions.isDraftDocument()}
-				</condition>
+				<facet>OttcDraft</facet>
 			</rule>
-		</filter>		
+		</filter>	
+		
+		<!-- Restriction of Checkin to Note only (for the moment) -->
+		<filter id="creating_Note">
+		  <rule grant="true">
+		      <condition>#{changeableDocument.getType() == 'Note'}</condition>
+		  </rule>
+		</filter>
+		
+		<filter id="is_Note">
+            <rule grant="true">
+                <type>Note</type>
+            </rule>
+        </filter>
+			
 	</extension>
 </component>

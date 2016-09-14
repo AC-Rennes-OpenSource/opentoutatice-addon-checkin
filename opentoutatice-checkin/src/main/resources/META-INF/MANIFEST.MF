@@ -7,3 +7,5 @@ Bundle-Category: stateful
 Nuxeo-Component: OSGI-INF/extensions/actions-contrib.xml,
  OSGI-INF/extensions/types-contrib.xml,
  OSGI-INF/extensions/fetchinfos-contrib.xml,
+ OSGI-INF/extensions/listener-contrib.xml
+ 

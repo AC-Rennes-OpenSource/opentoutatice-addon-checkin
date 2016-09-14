@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<component name="fr.toutatice.ecm.checkin.listener">
+
+    <require>fr.toutatice.ecm.platform.core.eventlistener</require>
+
+    <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
+
+        <listener name="ottcDeleteCheckinedListener" async="false" postCommit="false" enabled="true"
+            class="fr.toutatice.ecm.checkin.listener.DeleteDraftListener" priority="140">
+            <event>aboutToRemove</event>
+        </listener>
+        
+        <listener name="ottcCopyCheckinedListener" async="false" postCommit="false" enabled="true"
+            class="fr.toutatice.ecm.checkin.listener.CopyCheckinedListener" priority="140">
+            <event>documentCreatedByCopy</event>
+        </listener>
+
+    </extension>
+
+</component>
+
+

@@ -2,25 +2,20 @@
 
 <fragment version="1">
 
-
-	<extension target="application#MODULE">
-	</extension>
-
-	<extension target="faces-config#NAVIGATION">
-		<navigation-case>
-			<from-outcome>osivia_checkin</from-outcome>
-			<to-view-id>/osivia_checkin.xhtml</to-view-id>
-		</navigation-case>	
-	</extension>
-	
-	<extension target="pages#PAGES">
-	</extension>
+    <require>fr.toutatice.ecm.platform.web</require>
+    <require>org.osivia.opentoutatice.simple.ui</require>
+    
+    <extension target="application#MODULE">
+        <module>
+            <java>${bundle.fileName}</java>
+        </module>
+    </extension>
 	 
 	<install>
 		<unzip from="${bundle.fileName}" to="/">
 			<include>nuxeo.war/**</include>
 		</unzip>
-
+	
 		<!-- append l10n files -->
 		<delete path="${bundle.fileName}.tmp" />
 		<mkdir path="${bundle.fileName}.tmp" />
@@ -34,4 +29,5 @@
 
 		<delete path="${bundle.fileName}.tmp" />
 	</install>	
+	
 </fragment>

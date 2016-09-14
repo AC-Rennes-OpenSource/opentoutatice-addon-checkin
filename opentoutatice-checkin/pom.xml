@@ -61,6 +61,12 @@
 
 
 	<dependencies>
+	   <dependency>
+            <groupId>opentoutatice-ecm.platform</groupId>
+            <artifactId>opentoutatice-ecm-platform-core</artifactId>
+            <version>${nuxeo.opentoutatice.version}</version>
+        </dependency>
+	
 		<dependency>
             <groupId>opentoutatice-ecm.platform</groupId>
             <artifactId>opentoutatice-ecm-platform-web</artifactId>
