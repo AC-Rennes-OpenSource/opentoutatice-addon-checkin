@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>opentoutatice-ecm.checkin</groupId>
-	<artifactId>opentoutatice-ecm.checkin-parent</artifactId>
+	<artifactId>opentoutatice-ecm-checkin-parent</artifactId>
 	<packaging>pom</packaging>
 	<description>Addon to enable check-in documents in personnal workspace through portal</description>
 	<name>opentoutatice-ecm.checkin-parent</name>
@@ -16,8 +16,8 @@
 	</properties>
 
 	<modules>
-	   <module>opentoutatice-checkin</module>
-	   <!-- <module>opentoutatice-checkin-marketplace</module>  -->
+	   <module>opentoutatice-checkin</module> 
+	   <module>opentoutatice-checkin-marketplace</module>   
 	</modules>
 
 	<build>
