@@ -19,7 +19,7 @@ import fr.toutatice.ecm.platform.service.lock.DocumentLockInfosProviderImpl;
  * @author david
  *
  */
-public class CheckinLockInfosProviderImpl extends DocumentLockInfosProviderImpl {
+public class CheckinLockInfosProvider extends DocumentLockInfosProviderImpl {
     
     @Override
     public Map<String, Object> fetchInfos(CoreSession coreSession,

@@ -74,7 +74,7 @@ public class CheckinActions implements Serializable {
         
         // Prepare bean to save data in Draft Folder
         String docName = pathSegmentService.generatePathSegment(draftDocBean);
-        PathRef draftFolderRef = checkinHelper.getDraftFolderRef(documentManager, navigationContext);
+        PathRef draftFolderRef = checkinHelper.getDraftsFolderRef(documentManager, navigationContext);
         draftDocBean.setPathInfo((String) draftFolderRef.reference(), docName);
         draftDocBean.addFacet(DRAFT_FACET);
         draftDocBean.addFacet(WEBID_DISABLED_FACET);
@@ -113,7 +113,7 @@ public class CheckinActions implements Serializable {
         DocumentModel checkinableDoc = documentManager.getDocument(checkinableDocBean.getRef());
 
         // Copy to keep lifecycle, versions (?), ...
-        PathRef draftFolderRef = checkinHelper.getDraftFolderRef(documentManager, navigationContext);
+        PathRef draftFolderRef = checkinHelper.getDraftsFolderRef(documentManager, navigationContext);
         DocumentModel draftDoc = documentManager.copy(checkinableDoc.getRef(), draftFolderRef, null); // note that webId has changed (createdByCopy event)
         // To be able to set draft schema property
         // FIXME: find other way than save?

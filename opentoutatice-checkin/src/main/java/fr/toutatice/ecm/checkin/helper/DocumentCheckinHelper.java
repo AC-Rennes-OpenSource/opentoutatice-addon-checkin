@@ -28,6 +28,9 @@ public class DocumentCheckinHelper {
     
     /** Singleton instance. */
     private static DocumentCheckinHelper instance;
+    
+    /** UserWorkspace service. */
+    private static UserWorkspaceService uwService;
 
     /**
      * Singleton.
@@ -44,6 +47,13 @@ public class DocumentCheckinHelper {
             instance = new DocumentCheckinHelper();
         }
         return instance;
+    }
+    
+    public static UserWorkspaceService getUserWorkspaceService(){
+        if(uwService == null){
+            uwService = Framework.getService(UserWorkspaceService.class);
+        }
+        return uwService;
     }
     
     /**
@@ -129,32 +139,70 @@ public class DocumentCheckinHelper {
     
     /**
      * Gets draft folder reference (where documents are checkined).
-     * Creates if it doesn't exist.
+     * Creates Drafts folder it doesn't exist.
+     * 
+     * @param documentManager
+     * @param currentDoc
+     * @return reference of draft folder.
+     */
+    protected PathRef getDraftsFolderRef(CoreSession documentManager, DocumentModel currentDoc) {
+
+        DocumentModel userWorkspace = getUserWorkspace(documentManager, currentDoc);
+
+        PathRef draftFolder = new PathRef(userWorkspace.getPathAsString().concat("/")
+                .concat(CheckinConstants.DRAFTS));
+        if (!documentManager.exists(draftFolder)) {
+            createDraftsFolder(documentManager, userWorkspace);
+        }
+        return draftFolder;
+    }
+    
+    /**
+     * Gets draft folder reference (where documents are checkined).
+     * Creates Drafts folder it doesn't exist.
      * 
      * @param documentManager
      * @param navigationContext
      * @return reference of draft folder.
      */
-    public PathRef getDraftFolderRef(CoreSession documentManager, NavigationContext navigationContext) {
-        // Obtention du dossier personnel
-        UserWorkspaceService uwService = Framework
-                .getService(UserWorkspaceService.class);
+    public PathRef getDraftsFolderRef(CoreSession documentManager, NavigationContext navigationContext) {
+        return getDraftsFolderRef(documentManager, navigationContext.getCurrentDocument());
+    }
+    
+    /**
+     * Gets draft path (where documents are checkined).
+     * Creates Drafts folder if it doesn't exist.
+     * 
+     * @param session
+     * @param document
+     * @return
+     */
+    public String getDraftsFolderPath(CoreSession session, DocumentModel document){
+        PathRef draftFolder = getDraftsFolderRef(session, document);
+        return (String) draftFolder.reference();
+    }
 
-        DocumentModel userWorkspace = uwService
-                .getCurrentUserPersonalWorkspace(documentManager,
-                        navigationContext.getCurrentDocument());
-
-        // Initialisation Mes brouillons
-        PathRef draftFolder = new PathRef(userWorkspace.getPathAsString() + "/"
-                + CheckinConstants.DRAFTS);
-        if (!documentManager.exists(draftFolder)) {
-            DocumentModel d = documentManager.createDocumentModel(
-                    userWorkspace.getPathAsString(), CheckinConstants.DRAFTS, "Folder");
-            d.setPropertyValue("dc:title", CheckinConstants.DRAFTS_TITLE);
-
-            documentManager.createDocument(d);
-        }
-        return draftFolder;
+    /**
+     * Creates Drafts folder.
+     * 
+     * @param documentManager
+     * @param userWorkspace
+     */
+    protected void createDraftsFolder(CoreSession documentManager, DocumentModel userWorkspace) {
+        DocumentModel d = documentManager.createDocumentModel(
+                userWorkspace.getPathAsString(), CheckinConstants.DRAFTS, "Folder");
+        d.setPropertyValue("dc:title", CheckinConstants.DRAFTS_TITLE);
+        documentManager.createDocument(d);
+        documentManager.save();
+    }
+    
+    /**
+     * @param session
+     * @param currentDocument
+     * @return User Workspace
+     */
+    protected DocumentModel getUserWorkspace(CoreSession session, DocumentModel currentDocument){
+        return getUserWorkspaceService().getCurrentUserPersonalWorkspace(session, currentDocument);
     }
 
 }
