@@ -15,6 +15,11 @@
             class="fr.toutatice.ecm.checkin.listener.CopyCheckinedListener" priority="140">
             <event>documentCreatedByCopy</event>
         </listener>
+        
+        <listener name="ottcMoveCheckinedListener" async="false" postCommit="false" enabled="true"
+            class="fr.toutatice.ecm.checkin.listener.MoveCheckinedListener" priority="140">
+            <event>documentMoved</event>
+        </listener>
 
     </extension>
 

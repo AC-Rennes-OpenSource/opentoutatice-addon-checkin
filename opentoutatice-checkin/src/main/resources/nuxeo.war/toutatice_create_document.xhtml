@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<nxthemes:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:nxthemes="http://nuxeo.org/nxthemes"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:nxl="http://nuxeo.org/nxforms/layout"
+	xmlns:nxh="http://nuxeo.org/nxweb/html"
+	xmlns:nxd="http://nuxeo.org/nxweb/document"
+	xmlns:nxu="http://nuxeo.org/nxweb/util"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="body">
+
+		<div class="container">
+
+			<nxu:set var="doc"
+				value="#{documentActions.getOrCreateChangeableDocument()}"
+				cache="true">
+
+				<div class="form-group">
+					<h3>
+						<h:outputText
+							value="#{messages['toutatice.views.create.title']} #{messages[nxd:typeInfo(doc).label]}" />
+					</h3>
+				</div>
+
+				<c:choose>
+					<c:when test="#{not empty doc}">
+						<ui:include src="/incl/pv_message_banner.xhtml" />
+
+						<h:form enctype="multipart/form-data" id="document_create"
+							class="form-horizontal">
+
+							<nxl:documentLayout mode="create" value="#{doc}"
+								template="/layouts/toutatice_div_layout_edit.xhtml" />
+
+
+
+							<nav class="navbar navbar-default navbar-fixed-bottom">
+								<div class="container-fluid">
+									<div class="col-sm-offset-2">
+										<nxu:set var="actions"
+											value="#{webActions.getActionsList('TOUTATICE_CREATE_DOCUMENT_FORM')}"
+											cache="true">
+											<input type="hidden" name="parentDocumentPath"
+												value="#{currentDocument.pathAsString}" />
+											<c:forEach var="action" items="#{actions}">
+												<nxh:commandButton action="#{action.getLink()}"
+													immediate="#{action.immediate}" onclick="#{action.confirm}"
+													id="header_edit_doc_#{action.id}"
+													value="#{messages[action.label]}" 
+													class="btn #{nxu:test(empty action.properties.style, 'btn-primary', action.properties.style)} navbar-btn" />
+											
+											 <!-- <c:if test="#{!empty action.help}">
+		                                        <button title="" data-toogle="tooltip" data-placement="bottom" data-original-title="#{messages[action.help]}" onclick="return false;"
+		                                            class="btn btn-default">
+		                                            <i class="glyphicons halflings info-sign"></i>
+		                                            <span class="sr-only">#{messages[action.help]}</span>
+		                                        </button>
+		                                    </c:if> -->
+		                                   </c:forEach>
+										</nxu:set>
+									</div>
+								</div>
+							</nav>
+
+							<h:inputHidden name="fromUrl" value="#{pageBean.fromUrl}" />
+
+						</h:form>
+						<div class="pv-footer"></div>
+					</c:when>
+					<c:otherwise>
+						<h1>
+							<h:outputText
+								value="#{messages['toutatice.label.portal.view.create.error']}" />
+						</h1>
+					</c:otherwise>
+				</c:choose>
+			</nxu:set>
+		</div>
+	</ui:define>
+
+</nxthemes:composition>

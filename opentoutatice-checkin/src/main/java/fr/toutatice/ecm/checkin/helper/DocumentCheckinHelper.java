@@ -138,6 +138,17 @@ public class DocumentCheckinHelper {
     }
     
     /**
+     * Get Draft document.
+     * 
+     * @param checkinedDoc
+     * @return Draft document
+     */
+    public DocumentModel getDraftDoc(CoreSession session, DocumentModel checkinedDoc){
+        String draftId = DocumentHelper.getDraftIdFromId(checkinedDoc);
+        return WebIdResolver.getLiveDocumentByWebId(session, draftId);
+    }
+    
+    /**
      * Gets draft folder reference (where documents are checkined).
      * Creates Drafts folder it doesn't exist.
      * 

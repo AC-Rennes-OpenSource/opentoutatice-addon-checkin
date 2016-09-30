@@ -8,27 +8,36 @@
 		
 		 <!-- Creation -->      
         <action id="CREATE_N_CHECKIN_CURRENT_DOC" label="ottc.create.checkin.action"
-            link="#{checkinActions.createNCheckin()}" order="30">
+            link="#{checkinActions.createNCheckin()}" order="30" help="ottc.create.checkin.action.help">
             <category>TOUTATICE_CREATE_DOCUMENT_FORM</category>
             <filter-id>dont_belong_to_publish_space</filter-id>
             <filter-id>creating_Note</filter-id>
+            <properties>
+                <property name="style">btn-default</property>
+            </properties>
         </action>
 		
 		<!-- Checkin -->
 		<action id="CHECKIN_CURRENT_DOC" label="ottc.checkin.action"
-            link="#{checkinActions.checkin()}" order="30">
+            link="#{checkinActions.checkin()}" order="30" help="ottc.checkin.action.help">
             <category>TOUTATICE_EDIT_DOCUMENT_FORM</category>
             <filter-id>dont_belong_to_publish_space</filter-id>
             <filter-id>is_Note</filter-id>
             <filter-id>is_not_draft_doc</filter-id>
+            <properties>
+                <property name="style">btn-default</property>
+            </properties>
         </action>
         
 		<!-- Checkout -->
 		<action id="CHECKOUT_CURRENT_DOC" label="ottc.checkout.action"
-            link="#{checkinActions.checkout()}" order="30">
+            link="#{checkinActions.checkout()}" order="30" help="ottc.checkout.action.help">
             <category>TOUTATICE_EDIT_DOCUMENT_FORM</category>
 			<filter-id>dont_belong_to_publish_space</filter-id>
 			<filter-id>is_draft_doc</filter-id>
+			<properties>
+                <property name="style">btn-default</property>
+            </properties>
         </action>
         
 	</extension>

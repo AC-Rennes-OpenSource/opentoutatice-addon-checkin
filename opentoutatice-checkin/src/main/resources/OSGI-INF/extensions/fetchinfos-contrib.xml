@@ -16,7 +16,7 @@
         <fetchInfos name="lockInfosProvider"
             class="fr.toutatice.ecm.checkin.portal.infos.provider.CheckinLockInfosProvider" />
             
-        <fetchInfos name="lockInfosProvider"
+        <fetchInfos name="checkinFolderishInfos"
             class="fr.toutatice.ecm.checkin.portal.infos.provider.CheckinFolderishInfosProvider" />
 
     </extension>

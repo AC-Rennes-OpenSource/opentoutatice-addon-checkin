@@ -5,5 +5,6 @@
     targetNamespace="http://www.nuxeo.org/ecm/project/schemas/ottc/checkined">
     
     <xs:element name="draftPath" type="xs:string" default=""/>
+    <xs:element name="draftId" type="xs:string" default=""/>
     
 </xs:schema>

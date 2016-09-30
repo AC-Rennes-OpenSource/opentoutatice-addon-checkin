@@ -147,7 +147,9 @@ public class CheckinActions implements Serializable {
         // Silently To avoid modification of webId
         ToutaticeDocumentHelper.saveDocumentSilently(documentManager, checkinedDoc, false);
         // Facet must be saved before setting prop of facet's schema
+        // FIXME: use only webId
         checkinedDoc.setPropertyValue(CheckinConstants.DRAFT_PATH, draftDoc.getPathAsString());
+        checkinedDoc.setPropertyValue(CheckinConstants.DRAFT_ID, DocumentHelper.getId(draftDoc));
         ToutaticeDocumentHelper.saveDocumentSilently(documentManager, checkinedDoc, false);
         
         // To refresh go to draft document (cf osivia_done.xhtml)

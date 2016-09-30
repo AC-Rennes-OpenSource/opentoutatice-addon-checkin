@@ -33,6 +33,8 @@ public interface CheckinConstants {
     
     /** draftPath property key. */
     String DRAFT_PATH = "ottcChk:draftPath";
+    /** draftId property key. */
+    String DRAFT_ID = "ottcChk:draftId";
     
     /** Webid property key. */
     String OTTC_WEBID = ToutaticeNuxeoStudioConst.CST_DOC_SCHEMA_TOUTATICE_WEBID;
