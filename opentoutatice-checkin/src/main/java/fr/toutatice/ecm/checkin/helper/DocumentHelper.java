@@ -48,7 +48,7 @@ public class DocumentHelper {
     }
     
     /**
-     * Sets drfat webId: draft_webId.
+     * Sets draft webId: draft_webId.
      * 
      * @param draft
      */

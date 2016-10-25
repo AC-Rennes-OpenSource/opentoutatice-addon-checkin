@@ -24,6 +24,7 @@ import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 
 import fr.toutatice.ecm.checkin.constants.CheckinConstants;
 import fr.toutatice.ecm.checkin.helper.DocumentCheckinHelper;
+import fr.toutatice.ecm.platform.core.helper.ToutaticeDocumentHelper;
 import fr.toutatice.ecm.platform.service.url.WebIdResolver;
 
 
@@ -81,8 +82,7 @@ public class DeleteDraftListener implements EventListener {
             if(checkinedDoc != null){
                 checkinedDoc.removeFacet(CHECKINED_IN_FACET);
                 session.removeLock(checkinedDoc.getRef());
-                session.saveDocument(checkinedDoc);
-                session.save();
+                ToutaticeDocumentHelper.saveDocumentSilently(session, checkinedDoc, false);
             } else {
                 if(StringUtils.isNotEmpty(checkinedId)){
                     log.error("No Draft document with webid: ".concat(checkinedId));

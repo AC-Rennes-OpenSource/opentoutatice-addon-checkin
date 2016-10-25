@@ -78,6 +78,12 @@
             <artifactId>opentoutatice-ecm-platform-services</artifactId>
             <version>${nuxeo.opentoutatice.version}</version>
         </dependency>
+        
+         <dependency>
+            <groupId>opentoutatice-ecm.platform</groupId>
+            <artifactId>opentoutatice-ecm-platform-automation</artifactId>
+            <version>${nuxeo.opentoutatice.version}</version>
+        </dependency>
 	</dependencies>
 	
 </project>
