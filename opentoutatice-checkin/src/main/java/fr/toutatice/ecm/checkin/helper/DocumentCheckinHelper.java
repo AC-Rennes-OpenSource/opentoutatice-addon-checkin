@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.PathRef;
+import org.nuxeo.ecm.core.schema.FacetNames;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.platform.userworkspace.api.UserWorkspaceService;
 import org.nuxeo.runtime.api.Framework;
@@ -160,12 +161,18 @@ public class DocumentCheckinHelper {
 
         DocumentModel userWorkspace = getUserWorkspace(documentManager, currentDoc);
 
-        PathRef draftFolder = new PathRef(userWorkspace.getPathAsString().concat("/")
+        PathRef draftFolderRef = new PathRef(userWorkspace.getPathAsString().concat("/")
                 .concat(CheckinConstants.DRAFTS));
-        if (!documentManager.exists(draftFolder)) {
+        if (!documentManager.exists(draftFolderRef)) {
             createDraftsFolder(documentManager, userWorkspace);
+        } else {
+            DocumentModel draftFolder = documentManager.getDocument(draftFolderRef);
+            if(!draftFolder.hasFacet(FacetNames.HIDDEN_IN_NAVIGATION)){
+                draftFolder.addFacet(FacetNames.HIDDEN_IN_NAVIGATION);
+                documentManager.saveDocument(draftFolder);
+            }
         }
-        return draftFolder;
+        return draftFolderRef;
     }
     
     /**
@@ -203,8 +210,9 @@ public class DocumentCheckinHelper {
         DocumentModel d = documentManager.createDocumentModel(
                 userWorkspace.getPathAsString(), CheckinConstants.DRAFTS, "Folder");
         d.setPropertyValue("dc:title", CheckinConstants.DRAFTS_TITLE);
-        documentManager.createDocument(d);
-        documentManager.save();
+        DocumentModel draftFolder = documentManager.createDocument(d);
+        draftFolder.addFacet(FacetNames.HIDDEN_IN_NAVIGATION);
+        documentManager.saveDocument(draftFolder);
     }
     
     /**
