@@ -14,6 +14,7 @@ import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 
 import fr.toutatice.ecm.checkin.helper.DocumentCheckinHelper;
 import fr.toutatice.ecm.checkin.helper.DocumentHelper;
+import fr.toutatice.ecm.platform.core.helper.ToutaticeDocumentHelper;
 
 
 /**
@@ -46,8 +47,7 @@ public class MoveCheckinedListener implements EventListener {
                 DocumentModel draft = checkinHelper.getDraftDoc(session, srcDoc);
                 
                 checkinHelper.setCheckinedParentId(draft, checkinedParent);
-                session.saveDocument(draft);
-                session.save();
+                ToutaticeDocumentHelper.saveDocumentSilently(session, draft, true);
             }
         }
     }
