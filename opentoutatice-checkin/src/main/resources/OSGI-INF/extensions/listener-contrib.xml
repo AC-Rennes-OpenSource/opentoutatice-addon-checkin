@@ -6,21 +6,22 @@
 
     <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
 
-        <listener name="ottcDeleteCheckinedListener" async="false" postCommit="false" enabled="true"
-            class="fr.toutatice.ecm.checkin.listener.DeleteDraftListener" priority="140">
-            <event>lifecycle_transition_event</event>
+        <listener name="ottcDraftListener" async="false" postCommit="false" enabled="true"
+            class="fr.toutatice.ecm.checkin.listener.DraftListener" priority="140">
             <event>aboutToRemove</event>
         </listener>
         
-        <listener name="ottcCopyCheckinedListener" async="false" postCommit="false" enabled="true"
-            class="fr.toutatice.ecm.checkin.listener.CopyCheckinedListener" priority="140">
+        <listener name="ottcCheckinedListener" async="false" postCommit="false" enabled="true"
+            class="fr.toutatice.ecm.checkin.listener.CheckinedListener" priority="140">
+            <event>documentMoved</event>
             <event>documentCreatedByCopy</event>
+            <event>lifecycle_transition_event</event>
         </listener>
         
-        <listener name="ottcMoveCheckinedListener" async="false" postCommit="false" enabled="true"
-            class="fr.toutatice.ecm.checkin.listener.MoveCheckinedListener" priority="140">
-            <event>documentMoved</event>
-        </listener>
+        <listener name="ottcDeleteAsynFolderishCheckinedListener" async="true" postCommit="true" enabled="true"
+            class="fr.toutatice.ecm.checkin.listener.AsyncFolderishListener" priority="150">
+            <event>lifecycle_transition_event</event>
+        </listener> 
 
     </extension>
 

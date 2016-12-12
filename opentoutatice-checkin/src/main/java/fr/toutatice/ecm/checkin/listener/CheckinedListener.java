@@ -1,0 +1,93 @@
+/**
+ * 
+ */
+package fr.toutatice.ecm.checkin.listener;
+
+import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.LifeCycleConstants;
+import org.nuxeo.ecm.core.api.event.DocumentEventTypes;
+import org.nuxeo.ecm.core.event.Event;
+import org.nuxeo.ecm.core.event.EventContext;
+import org.nuxeo.ecm.core.event.EventListener;
+import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
+
+import fr.toutatice.ecm.checkin.helper.DocumentCheckinHelper;
+import fr.toutatice.ecm.platform.core.helper.ToutaticeDocumentHelper;
+
+
+/**
+ * @author david
+ *
+ */
+public class CheckinedListener implements EventListener {
+
+    /**
+     * Constructor.
+     */
+    public CheckinedListener() {
+        super();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handleEvent(Event event) throws ClientException {
+        EventContext context = event.getContext();
+        if (context instanceof DocumentEventContext) {
+
+            DocumentEventContext docCtx = (DocumentEventContext) context;
+            DocumentModel srcDoc = docCtx.getSourceDocument();
+            CoreSession session = docCtx.getCoreSession();
+
+            DocumentCheckinHelper checkinHelper = DocumentCheckinHelper.getInstance();
+            if (checkinHelper.hasDraft(srcDoc)) {
+                if (DocumentEventTypes.DOCUMENT_MOVED.equals(event.getName())) {
+                    updateDraft(srcDoc, session, checkinHelper);
+                } else if (LifeCycleConstants.TRANSITION_EVENT.equals(event.getName())) {
+                    // In case of trashed Folderidh, transition event is propagated on its children
+                    // (cf BulkLifecCycleListener)
+                    String transition = (String) docCtx.getProperty(LifeCycleConstants.TRANSTION_EVENT_OPTION_TRANSITION);
+                    if(LifeCycleConstants.DELETE_TRANSITION.equals(transition)){
+                        removeDraft(session, srcDoc);
+                        checkinHelper.restoreCheckinedDoc(session, srcDoc);
+                    }
+                } else if (DocumentEventTypes.DOCUMENT_CREATED_BY_COPY.equals(event.getName())) {
+                    checkinHelper.restoreCheckinedDoc(session, srcDoc);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Remove draft of given checkined document.
+     * 
+     * @param checkinedDoc 
+     */
+    private void removeDraft(CoreSession session, DocumentModel checkinedDoc) {
+        DocumentModel draft = DocumentCheckinHelper.getInstance().getDraftDoc(session, checkinedDoc);
+        // Not done silently for DraftListener to be called
+        // to clean checkined document
+        ToutaticeDocumentHelper.removeDocumentSilently(session, draft, false);
+        // Cache invalidation
+        session.save();
+    }
+
+    /**
+     * Updates Draft according to moved checkined document.
+     * 
+     * @param srcDoc
+     * @param session
+     * @param checkinHelper
+     */
+    public void updateDraft(DocumentModel srcDoc, CoreSession session, DocumentCheckinHelper checkinHelper) {
+        DocumentModel checkinedParent = session.getParentDocument(srcDoc.getRef());
+        DocumentModel draft = checkinHelper.getDraftDoc(session, srcDoc);
+        
+        checkinHelper.setCheckinedParentId(draft, checkinedParent);
+        ToutaticeDocumentHelper.saveDocumentSilently(session, draft, true);
+    }
+
+}

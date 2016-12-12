@@ -7,8 +7,9 @@ import static fr.toutatice.ecm.checkin.constants.CheckinConstants.CHECKINED_DOC_
 import static fr.toutatice.ecm.checkin.constants.CheckinConstants.CHECKINED_IN_FACET;
 import static fr.toutatice.ecm.checkin.constants.CheckinConstants.CHECKINED_PARENT_ID;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.PathRef;
@@ -18,6 +19,7 @@ import org.nuxeo.ecm.platform.userworkspace.api.UserWorkspaceService;
 import org.nuxeo.runtime.api.Framework;
 
 import fr.toutatice.ecm.checkin.constants.CheckinConstants;
+import fr.toutatice.ecm.platform.core.helper.ToutaticeDocumentHelper;
 import fr.toutatice.ecm.platform.service.url.WebIdResolver;
 
 
@@ -26,6 +28,9 @@ import fr.toutatice.ecm.platform.service.url.WebIdResolver;
  *
  */
 public class DocumentCheckinHelper {
+    
+    /** Logger. */
+    private static final Log log = LogFactory.getLog(DocumentCheckinHelper.class);
     
     /** Singleton instance. */
     private static DocumentCheckinHelper instance;
@@ -130,11 +135,8 @@ public class DocumentCheckinHelper {
      * @return true if draft has a checkined document.
      */
     public boolean hasCheckinedDoc(CoreSession session, DocumentModel draft){
-        String checkinedId = DocumentHelper.getIdFromDraftId(draft);
+        String checkinedId = DocumentHelper.getCheckinedIdFromDraftDoc(draft);
         DocumentModel checkinedDoc = WebIdResolver.getLiveDocumentByWebId(session, checkinedId);
-        // FIXME: case of doc created and checkined after draft orphelin
-        // draft: webid = draft_y and new checkined: webid = y ...
-        // Check on webid generation?
         return checkinedDoc != null && checkinedDoc.hasFacet(CHECKINED_IN_FACET);
     }
     
@@ -145,7 +147,7 @@ public class DocumentCheckinHelper {
      * @return Draft document
      */
     public DocumentModel getDraftDoc(CoreSession session, DocumentModel checkinedDoc){
-        String draftId = DocumentHelper.getDraftIdFromId(checkinedDoc);
+        String draftId = DocumentHelper.getDraftIdFromCheckinedDoc(checkinedDoc);
         return WebIdResolver.getLiveDocumentByWebId(session, draftId);
     }
     
@@ -157,7 +159,7 @@ public class DocumentCheckinHelper {
      * @param currentDoc
      * @return reference of draft folder.
      */
-    protected PathRef getDraftsFolderRef(CoreSession documentManager, DocumentModel currentDoc) {
+    public PathRef getDraftsFolderRef(CoreSession documentManager, DocumentModel currentDoc) {
 
         DocumentModel userWorkspace = getUserWorkspace(documentManager, currentDoc);
 
@@ -222,6 +224,49 @@ public class DocumentCheckinHelper {
      */
     protected DocumentModel getUserWorkspace(CoreSession session, DocumentModel currentDocument){
         return getUserWorkspaceService().getCurrentUserPersonalWorkspace(session, currentDocument);
+    }
+    
+    /**
+     * Restore state of checkined document.
+     * 
+     * @param session
+     * @param checkinedId
+     */
+    public void restoreCheckinedDoc(CoreSession session, String checkinedId) {
+
+        if (StringUtils.isNotEmpty(checkinedId)) {
+            DocumentModel checkinedDoc = WebIdResolver.getLiveDocumentByWebId(session, checkinedId);
+
+            if (checkinedDoc != null) {
+                removeDraftInfosOn(session, checkinedDoc);
+            } else {
+                if (StringUtils.isNotEmpty(checkinedId)) {
+                    log.error("No Draft document with webid: ".concat(checkinedId));
+                }
+            }
+        }
+    }
+
+    /**
+     * Restore state of checkined document.
+     * 
+     * @param session
+     * @param checkinedDoc
+     */
+    public void restoreCheckinedDoc(CoreSession session, DocumentModel checkinedDoc) {
+        removeDraftInfosOn(session, checkinedDoc);
+    }
+    
+    /**
+     * Remove Draft infos on checkined document.
+     * 
+     * @param session
+     * @param checkinedDoc
+     */
+    public void removeDraftInfosOn(CoreSession session, DocumentModel checkinedDoc) {
+        checkinedDoc.removeFacet(CHECKINED_IN_FACET);
+        session.removeLock(checkinedDoc.getRef());
+        ToutaticeDocumentHelper.saveDocumentSilently(session, checkinedDoc, false);
     }
 
 }

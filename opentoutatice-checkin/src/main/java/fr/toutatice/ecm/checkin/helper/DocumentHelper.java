@@ -3,15 +3,12 @@
  */
 package fr.toutatice.ecm.checkin.helper;
 
-import static fr.toutatice.ecm.checkin.constants.CheckinConstants.DRAFT_PREFIX;
 import static fr.toutatice.ecm.checkin.constants.CheckinConstants.OTTC_WEBID;
 
 import org.apache.commons.lang.StringUtils;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
-import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
-import org.nuxeo.runtime.api.Framework;
 
 import fr.toutatice.ecm.checkin.constants.CheckinConstants;
 import fr.toutatice.ecm.platform.service.url.WebIdResolver;
@@ -36,39 +33,6 @@ public class DocumentHelper {
      */
     public static String getId(DocumentModel document){
         return (String) document.getPropertyValue(OTTC_WEBID);
-    }
-    
-    /**
-     * @param originalDocument
-     * @return webId of document prefixed with "draft_".
-     */
-    public static String getDraftIdFromId(DocumentModel checkinedDocument){
-        String webId = (String) checkinedDocument.getPropertyValue(OTTC_WEBID);
-        return DRAFT_PREFIX + webId;
-    }
-    
-    /**
-     * Sets draft webId: draft_webId.
-     * 
-     * @param draft
-     */
-    public static void setDraftIdFromId(DocumentModel draft){
-        String webId = (String) draft.getPropertyValue(OTTC_WEBID);
-        if(!webId.startsWith(DRAFT_PREFIX)){
-            draft.setPropertyValue(OTTC_WEBID, DRAFT_PREFIX + webId);
-        }
-    }
-    
-    /**
-     * @param draftDocument
-     * @return webid of original document from draft document.
-     */
-    public static String getIdFromDraftId(DocumentModel draftDocument){
-        String draftId = (String) draftDocument.getPropertyValue(OTTC_WEBID);
-        if(draftId.startsWith(DRAFT_PREFIX)){
-            return StringUtils.replace(draftId, DRAFT_PREFIX, StringUtils.EMPTY);
-        }
-        return draftId;
     }
     
     /**
@@ -103,6 +67,32 @@ public class DocumentHelper {
             return document.getPathAsString();
         }
         // TODO: Exception?
+        return StringUtils.EMPTY;
+    }
+    
+    /**
+     * Get checkined webId of draft document.
+     * 
+     * @param draft
+     * @return checkined webId of draft document
+     */
+    public static String getCheckinedIdFromDraftDoc(DocumentModel draft){
+        if(draft.hasFacet(CheckinConstants.DRAFT_FACET)){
+            return (String) draft.getPropertyValue(CheckinConstants.CHECKINED_DOC_ID);
+        }
+        return StringUtils.EMPTY;
+    }
+    
+    /**
+     * Get draft webId of checkined document.
+     * 
+     * @param checkined
+     * @return draft webId of checkined document
+     */
+    public static String getDraftIdFromCheckinedDoc(DocumentModel checkined){
+        if(checkined.hasFacet(CheckinConstants.CHECKINED_IN_FACET)){
+            return (String) checkined.getPropertyValue(CheckinConstants.DRAFT_ID);
+        }
         return StringUtils.EMPTY;
     }
     

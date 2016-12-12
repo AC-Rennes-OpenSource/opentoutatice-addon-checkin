@@ -19,8 +19,6 @@ public interface CheckinConstants {
     /** Facet indicating that webId can not be modified. */
     String WEBID_DISABLED_FACET = "WebidDisabled";
     
-    /** Draft webid prefix. */
-    String DRAFT_PREFIX = "draft_";
     /** Default chekin folder. */
     String DRAFTS = "drafts";
     /** Default chekin folder. */

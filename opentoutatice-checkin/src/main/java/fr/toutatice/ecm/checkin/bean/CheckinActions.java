@@ -3,13 +3,11 @@ package fr.toutatice.ecm.checkin.bean;
 
 import static fr.toutatice.ecm.checkin.constants.CheckinConstants.CHECKINED_IN_FACET;
 import static fr.toutatice.ecm.checkin.constants.CheckinConstants.DRAFT_FACET;
-import static fr.toutatice.ecm.checkin.constants.CheckinConstants.OTTC_WEBID;
 import static fr.toutatice.ecm.checkin.constants.CheckinConstants.WEBID_DISABLED_FACET;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -84,7 +82,6 @@ public class CheckinActions implements Serializable {
         DocumentModel draftDoc = documentManager.createDocument(draftDocBean);
         
         // Store draft infos
-        DocumentHelper.setDraftIdFromId(draftDoc);
         checkinHelper.setCheckinedParentId(draftDoc, checkoutParentDoc);
         
         // Save and invalidations of caches
@@ -128,7 +125,6 @@ public class CheckinActions implements Serializable {
 
         // To fill draft document with checkinableDocBean data
         checkinableDocBean.setPathInfo(DocumentHelper.getParentPath(draftDoc), draftDoc.getName());
-        checkinableDocBean.setPropertyValue(OTTC_WEBID, DocumentHelper.getDraftIdFromId(checkinableDocBean));
 
         draftDoc = documentManager.saveDocument(checkinableDocBean); 
         // Doc is checkined now
@@ -177,7 +173,6 @@ public class CheckinActions implements Serializable {
 	        String checkoutParentId = checkinHelper.getCheckinedParentId(draftBean);
 	        draftBean.removeFacet(DRAFT_FACET);
 	        draftBean.removeFacet(WEBID_DISABLED_FACET);
-	        draftBean.setPropertyValue(OTTC_WEBID, DocumentHelper.getIdFromDraftId(draftBean));
 	        draftBean.putContextData(VersioningService.VERSIONING_OPTION, VersioningOption.MINOR);
 	        DocumentModel draftDoc = documentManager.saveDocument(draftBean);
 	        
@@ -185,14 +180,14 @@ public class CheckinActions implements Serializable {
 	        // (Draft has been created with no prefixed webId
 	        // (as the logical document exists only in one state)
 	        String checkoutParentPath = DocumentHelper.getPathFromId(documentManager, checkoutParentId);
-	        checkoutedDoc = documentManager.move(draftDoc.getRef(), new PathRef(checkoutParentPath), DocumentHelper.getIdFromDraftId(draftDoc));
+	        checkoutedDoc = documentManager.move(draftDoc.getRef(), new PathRef(checkoutParentPath), DocumentHelper.getCheckinedIdFromDraftDoc(draftDoc));
 	        
 	    } else {
 	        // Remove Draft (path to restore) before save to avoid webid modification
             //formDraftBean.setPathInfo(DocumentHelper.getPath(documentManager, getDraftFolderRef()), formDraftBean.getName());
             documentManager.removeDocument(draftBean.getRef());
 	        
-	        String checkinedDocId = DocumentHelper.getIdFromDraftId(draftBean);
+	        String checkinedDocId = DocumentHelper.getCheckinedIdFromDraftDoc(draftBean);
     		DocumentModel checkinedDoc = WebIdResolver.getLiveDocumentByWebId(
     				documentManager, checkinedDocId);
     		

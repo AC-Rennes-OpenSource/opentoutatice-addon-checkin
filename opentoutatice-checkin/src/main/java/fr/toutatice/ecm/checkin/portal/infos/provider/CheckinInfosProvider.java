@@ -18,7 +18,6 @@ import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
-import fr.toutatice.ecm.checkin.constants.CheckinConstants;
 import fr.toutatice.ecm.checkin.helper.DocumentCheckinHelper;
 import fr.toutatice.ecm.checkin.helper.DocumentHelper;
 import fr.toutatice.ecm.platform.core.services.infos.provider.DocumentInformationsProvider;
@@ -48,7 +47,7 @@ public class CheckinInfosProvider implements DocumentInformationsProvider {
 			String owner = currentDocument.getLockInfo().getOwner();
 			if(coreSession.getPrincipal().getName().equals(owner)) {
 				// Check draft existence
-				String draftId = DocumentHelper.getDraftIdFromId(currentDocument);
+				String draftId = DocumentHelper.getDraftIdFromCheckinedDoc(currentDocument);
 				DocumentModel draft = WebIdResolver.getLiveDocumentByWebId(coreSession, draftId);
 				
 				String draftPath = StringUtils.EMPTY;
