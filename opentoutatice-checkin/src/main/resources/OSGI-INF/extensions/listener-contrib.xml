@@ -16,11 +16,18 @@
             <event>documentMoved</event>
             <event>documentCreatedByCopy</event>
             <event>lifecycle_transition_event</event>
+            <event>aboutToRemove</event>
         </listener>
         
-        <listener name="ottcDeleteAsynFolderishCheckinedListener" async="true" postCommit="true" enabled="true"
-            class="fr.toutatice.ecm.checkin.listener.AsyncFolderishListener" priority="150">
+       <listener name="ottcDeleteFolderishDraftsListener" async="false" postCommit="false" enabled="true"
+            class="fr.toutatice.ecm.checkin.listener.FolderishInfosListener" priority="150">
+            <event>aboutToRemove</event>    
+        </listener> 
+        
+        <listener name="ottcDeleteAsyncFolderishDraftsListener" async="true" postCommit="true" enabled="true"
+            class="fr.toutatice.ecm.checkin.listener.AsyncFolderishListener" priority="170">
             <event>lifecycle_transition_event</event>
+            <event>documentRemoved</event>
         </listener> 
 
     </extension>
