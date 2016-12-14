@@ -5,8 +5,12 @@ package fr.toutatice.ecm.checkin.helper;
 
 import static fr.toutatice.ecm.checkin.constants.CheckinConstants.OTTC_WEBID;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.DataModel;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
 
@@ -94,6 +98,26 @@ public class DocumentHelper {
             return (String) checkined.getPropertyValue(CheckinConstants.DRAFT_ID);
         }
         return StringUtils.EMPTY;
+    }
+    
+    /**
+     * Set data models of document as dirty to be saved
+     * (case of checkedIn document update with draft bean data:
+     * cf CheckinActions#checkout).
+     * 
+     * @param document
+     */
+    public static DocumentModel setDirty(DocumentModel document){
+        Collection<DataModel> dataModelsCollection = document.getDataModelsCollection();
+        if(dataModelsCollection != null){
+            for (DataModel dm : dataModelsCollection) {
+                Set<String> fieldsNames = dm.getMap().keySet();
+                for(String fieldName : fieldsNames){
+                    dm.setDirty(fieldName);
+                }
+            }
+        }
+        return document;
     }
     
 }

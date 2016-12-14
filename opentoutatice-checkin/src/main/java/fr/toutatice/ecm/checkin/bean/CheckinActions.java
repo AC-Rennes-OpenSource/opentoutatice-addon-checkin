@@ -184,7 +184,7 @@ public class CheckinActions implements Serializable {
 	        
 	    } else {
 	        // Remove Draft (path to restore) before save to avoid webid modification
-            //formDraftBean.setPathInfo(DocumentHelper.getPath(documentManager, getDraftFolderRef()), formDraftBean.getName());
+            // formDraftBean.setPathInfo(DocumentHelper.getPath(documentManager, getDraftFolderRef()), formDraftBean.getName());
             documentManager.removeDocument(draftBean.getRef());
 	        
 	        String checkinedDocId = DocumentHelper.getCheckinedIdFromDraftDoc(draftBean);
@@ -195,6 +195,8 @@ public class CheckinActions implements Serializable {
     		draftBean.putContextData(VersioningService.VERSIONING_OPTION, VersioningOption.MINOR);
     		
     		// Editorial save
+    		draftBean.removeFacet(CheckinConstants.DRAFT_FACET);
+    		draftBean = DocumentHelper.setDirty(draftBean);
     		checkoutedDoc = documentManager.saveDocument(draftBean);
     		
     		// Deletion of Checkin state is done by DeleteDraftListener
