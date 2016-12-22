@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>opentoutatice-ecm.checkin</groupId>
 		<artifactId>opentoutatice-ecm-checkin-parent</artifactId>
-		<version>3.4.0-RC04</version>
+		<version>3.4.0-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>opentoutatice-addon-checkin-ecm</artifactId>
