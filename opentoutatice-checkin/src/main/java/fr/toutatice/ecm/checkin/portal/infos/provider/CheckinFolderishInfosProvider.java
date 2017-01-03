@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.toutatice.ecm.checkin.portal.infos.provider;
 
@@ -20,57 +20,62 @@ import fr.toutatice.ecm.platform.core.services.infos.provider.DocumentInformatio
 
 
 /**
- * @author david
+ * Checkin folderish infos provider
  *
+ * @author David Chevrier
+ * @see DocumentInformationsProvider
  */
 public class CheckinFolderishInfosProvider implements DocumentInformationsProvider {
-    
-    /** Drafts query and fetch clause. */
-    private static final String DRAFTS_QUERY_AND_FETCH_CLAUSE = "select ecm:uuid from Document where ";  
-    /** Drafts query. */
-    public static final String DRAFTS_QUERY_WHERE_CLAUSE = " ecm:path startswith '%s' and ecm:mixinType = 'OttcDraft'"
-            .concat(" and ottcDft:checkoutParentId = '%s' and ecm:currentLifeCycleState <> 'deleted'");
-    /** Query and fetch drafts. */
-    public static final String DRAFTS_QUERY_AND_FETCH = DRAFTS_QUERY_AND_FETCH_CLAUSE.concat(DRAFTS_QUERY_WHERE_CLAUSE);
-    
-    /** Elasticseach service. */
-    private static ElasticSearchService esService;
-    
+
+    /** ElasticSearch service. */
+    private final ElasticSearchService esService;
+
+
     /**
      * Constructor.
      */
     public CheckinFolderishInfosProvider() {
         super();
+
+        // ElasticSearch service
+        this.esService = Framework.getService(ElasticSearchService.class);
     }
-    
-    protected static ElasticSearchService getElasticSearchService(){
-        if(esService == null){
-            esService = Framework.getService(ElasticSearchService.class);
-        }
-        return esService;
-    }
-    
+
+
     /**
-     * Checks if Folderish has Drafts.
+     * {@inheritDoc}
      */
     @Override
     public Map<String, Object> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+        // Infos
         Map<String, Object> infos = new HashMap<String, Object>(1);
-        if(currentDocument.isFolder()){
-            
+
+        if (currentDocument.isFolder()) {
+            // Query builder
             NxQueryBuilder queryBuilder = new NxQueryBuilder(coreSession);
+            // Draft folder path
             String userWsPath = DocumentCheckinHelper.getInstance().getDraftsFolderPath(coreSession, currentDocument);
+            // Checkout parent identifier
             String checkoutParentId = DocumentHelper.getId(currentDocument);
-            String query = String.format(DRAFTS_QUERY_AND_FETCH, userWsPath, checkoutParentId);
-            queryBuilder.nxql(query);
-            
-            EsResult draftsIds = getElasticSearchService().queryAndAggregate(queryBuilder);
-            if(draftsIds != null && draftsIds.getRows() != null){
-                Boolean hasDrafts  = Boolean.valueOf(draftsIds.getRows().size() > 0);
-                infos.put("hasDrafts", hasDrafts);
+            // Query
+            StringBuilder query = new StringBuilder();
+            query.append("SELECT ecm:uuid FROM Document ");
+            query.append("WHERE ecm:path STARTSWITH '").append(userWsPath).append("' ");
+            query.append("AND ecm:mixinType = 'OttcDraft' ");
+            query.append("AND ottcDft:checkoutParentId = '").append(checkoutParentId).append("' ");
+            query.append("AND ecm:currentLifeCycleState <> 'deleted' ");
+            queryBuilder.nxql(query.toString());
+
+            // ElasticSearch result
+            EsResult draftsIds = this.esService.queryAndAggregate(queryBuilder);
+
+            if ((draftsIds != null) && (draftsIds.getRows() != null)) {
+                // Draft count
+                long draftCount = draftsIds.getRows().size();
+                infos.put("draftCount", draftCount);
             }
-            
         }
+
         return infos;
     }
 
