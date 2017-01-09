@@ -84,11 +84,19 @@ public class CheckinFolderishInfosProvider implements DocumentInformationsProvid
                 }
             } else {
                 // VCS query
-                IterableQueryResult draftsRows = coreSession.queryAndFetch(query.toString(), NXQL.NXQL, new Object[0]);
+                IterableQueryResult draftsRows = null;
 
-                if (draftsRows != null) {
-                    // Draft count
-                    draftCount = draftsRows.size();
+                try {
+                    draftsRows = coreSession.queryAndFetch(query.toString(), NXQL.NXQL, new Object[0]);
+
+                    if (draftsRows != null) {
+                        // Draft count
+                        draftCount = draftsRows.size();
+                    }
+                } finally {
+                    if (draftsRows != null) {
+                        draftsRows.close();
+                    }
                 }
             }
 
