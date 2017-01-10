@@ -135,7 +135,7 @@ public class DocumentCheckinHelper {
      * @return true if draft has a checkined document.
      */
     public boolean hasCheckinedDoc(CoreSession session, DocumentModel draft){
-        String checkinedId = DocumentHelper.getCheckinedIdFromDraftDoc(draft);
+        String checkinedId = DocumentHelper.getCheckinedIdOfDraftDoc(draft);
         DocumentModel checkinedDoc = WebIdResolver.getLiveDocumentByWebId(session, checkinedId);
         return checkinedDoc != null && checkinedDoc.hasFacet(CHECKINED_IN_FACET);
     }

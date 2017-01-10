@@ -61,6 +61,24 @@ public class DocumentHelper {
     }
     
     /**
+     * Getter for webId of parent of given document.
+     * 
+     * @param session
+     * @param document
+     * @return webId of document's parent
+     */
+    public static String getParentId (CoreSession session, DocumentModel document){
+        DocumentRef parentRef = document.getParentRef();
+        DocumentModel parent = session.getDocument(parentRef);
+        
+        if(parent != null){
+            return getId(parent);
+        }
+        
+        return StringUtils.EMPTY;
+    }
+    
+    /**
      * @param session
      * @param documentRef
      * @return path of document reference.
@@ -80,7 +98,7 @@ public class DocumentHelper {
      * @param draft
      * @return checkined webId of draft document
      */
-    public static String getCheckinedIdFromDraftDoc(DocumentModel draft){
+    public static String getCheckinedIdOfDraftDoc(DocumentModel draft){
         if(draft.hasFacet(CheckinConstants.DRAFT_FACET)){
             return (String) draft.getPropertyValue(CheckinConstants.CHECKINED_DOC_ID);
         }

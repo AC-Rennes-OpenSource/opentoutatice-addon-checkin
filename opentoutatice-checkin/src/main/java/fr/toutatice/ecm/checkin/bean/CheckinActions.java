@@ -112,10 +112,12 @@ public class CheckinActions implements Serializable {
         // Copy to keep lifecycle, versions (?), ...
         PathRef draftFolderRef = checkinHelper.getDraftsFolderRef(documentManager, navigationContext);
         DocumentModel draftDoc = documentManager.copy(checkinableDoc.getRef(), draftFolderRef, null); // note that webId has changed (createdByCopy event)
+        
         // To be able to set draft schema property
         // FIXME: find other way than save?
         draftDoc.addFacet(DRAFT_FACET);
         draftDoc.addFacet(WEBID_DISABLED_FACET);
+        
         // Explicit checkin so:
         DocumentModel checkinedParent = documentManager.getParentDocument(checkinableDoc.getRef());
         checkinHelper.setCheckinedParentId(draftDoc, checkinedParent);
@@ -125,6 +127,8 @@ public class CheckinActions implements Serializable {
 
         // To fill draft document with checkinableDocBean data
         checkinableDocBean.setPathInfo(DocumentHelper.getParentPath(draftDoc), draftDoc.getName());
+        // To be able to write all properties, not the current modified ones only
+        //checkinableDocBean = DocumentHelper.setDirty(checkinableDocBean); Not needed??
 
         draftDoc = documentManager.saveDocument(checkinableDocBean); 
         // Doc is checkined now
@@ -180,14 +184,14 @@ public class CheckinActions implements Serializable {
 	        // (Draft has been created with no prefixed webId
 	        // (as the logical document exists only in one state)
 	        String checkoutParentPath = DocumentHelper.getPathFromId(documentManager, checkoutParentId);
-	        checkoutedDoc = documentManager.move(draftDoc.getRef(), new PathRef(checkoutParentPath), DocumentHelper.getCheckinedIdFromDraftDoc(draftDoc));
+	        checkoutedDoc = documentManager.move(draftDoc.getRef(), new PathRef(checkoutParentPath), DocumentHelper.getCheckinedIdOfDraftDoc(draftDoc));
 	        
 	    } else {
 	        // Remove Draft (path to restore) before save to avoid webid modification
             // formDraftBean.setPathInfo(DocumentHelper.getPath(documentManager, getDraftFolderRef()), formDraftBean.getName());
             documentManager.removeDocument(draftBean.getRef());
 	        
-	        String checkinedDocId = DocumentHelper.getCheckinedIdFromDraftDoc(draftBean);
+	        String checkinedDocId = DocumentHelper.getCheckinedIdOfDraftDoc(draftBean);
     		DocumentModel checkinedDoc = WebIdResolver.getLiveDocumentByWebId(
     				documentManager, checkinedDocId);
     		
@@ -196,6 +200,7 @@ public class CheckinActions implements Serializable {
     		
     		// Editorial save
     		draftBean.removeFacet(CheckinConstants.DRAFT_FACET);
+    		// To be able to write all properties, not the current modified ones only
     		draftBean = DocumentHelper.setDirty(draftBean);
     		checkoutedDoc = documentManager.saveDocument(draftBean);
     		
