@@ -40,6 +40,8 @@ public class CheckinInfosProvider implements DocumentInformationsProvider {
 	@Override
 	public Map<String, Object> fetchInfos(CoreSession coreSession,
 			DocumentModel currentDocument) throws ClientException {
+	    // PERF
+	    long begin = System.currentTimeMillis();
 		
 		Map<String, Object> infos = new HashMap<String, Object>();
 		
@@ -88,6 +90,9 @@ public class CheckinInfosProvider implements DocumentInformationsProvider {
 
         }
 		
+        // PERF
+        long end = System.currentTimeMillis();
+        log.info(": " + String.valueOf(end - begin) + " ms");
 		
 		return infos;
 	}

@@ -5,6 +5,8 @@ package fr.toutatice.ecm.checkin.portal.infos.provider;
 
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -21,9 +23,14 @@ import fr.toutatice.ecm.platform.service.lock.DocumentLockInfosProviderImpl;
  */
 public class CheckinLockInfosProvider extends DocumentLockInfosProviderImpl {
     
+    /** Logger. */
+    private static final Log log = LogFactory.getLog(CheckinLockInfosProvider.class);
+    
     @Override
     public Map<String, Object> fetchInfos(CoreSession coreSession,
             DocumentModel currentDocument) throws ClientException {
+        // PERF
+        long begin = System.currentTimeMillis();
 
         Map<String, Object> lockInfos = super.fetchInfos(coreSession, currentDocument);
         
@@ -41,6 +48,10 @@ public class CheckinLockInfosProvider extends DocumentLockInfosProviderImpl {
             return lockInfos;
         
         }
+        
+        // PERF
+        long end = System.currentTimeMillis();
+        log.info(": " + String.valueOf(end - begin) + " ms");
         
         return lockInfos;
         

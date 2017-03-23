@@ -6,6 +6,8 @@ package fr.toutatice.ecm.checkin.portal.infos.provider;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -29,6 +31,9 @@ import fr.toutatice.ecm.platform.core.services.infos.provider.DocumentInformatio
  * @see DocumentInformationsProvider
  */
 public class CheckinFolderishInfosProvider implements DocumentInformationsProvider {
+    
+    /** Logger. */
+    private static final Log log = LogFactory.getLog(CheckinFolderishInfosProvider.class);
 
     /** ElasticSearch's server enabled indicator. */
     private static boolean isEsEnabled;
@@ -52,25 +57,39 @@ public class CheckinFolderishInfosProvider implements DocumentInformationsProvid
     /**
      * {@inheritDoc}
      */
-    // FIXME: modify fetchInfos to take ES into account (new param or abstract class)
+    // FIXME: modify fetchInfos to take ES into account (new param or abstract class)?
     @Override
     public Map<String, Object> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+        // For Trace logs
+        long begin = System.currentTimeMillis();
+        
         // Infos
         Map<String, Object> infos = new HashMap<String, Object>(1);
 
         if (currentDocument.isFolder()) {
+            // For Trace logs
+            long b1 = System.currentTimeMillis();
+            
             // Draft folder path
-            String userWsPath = DocumentCheckinHelper.getInstance().getDraftsFolderPath(coreSession, currentDocument);
+            String draftsFolderPath = DocumentCheckinHelper.getInstance().getDraftsFolderPath(coreSession, currentDocument);
+            
+            if(log.isTraceEnabled()){
+                long e1 = System.currentTimeMillis();
+                log.trace(" [getDraftsFolderPath]: " + String.valueOf(e1 - b1 + " ms"));
+            }
+            
             // Checkout parent identifier
             String checkoutParentId = DocumentHelper.getId(currentDocument);
             // Query
             StringBuilder query = new StringBuilder();
             query.append("SELECT ecm:uuid FROM Document ");
-            query.append("WHERE ecm:path STARTSWITH '").append(userWsPath).append("' ");
-            query.append("AND ecm:mixinType = 'OttcDraft' ");
-            query.append("AND ottcDft:checkoutParentId = '").append(checkoutParentId).append("' ");
+            query.append("WHERE ecm:path STARTSWITH '").append(draftsFolderPath).append("' ");
             query.append("AND ecm:currentLifeCycleState <> 'deleted' ");
-
+            query.append("AND ottcDft:checkoutParentId = '").append(checkoutParentId).append("' ");
+            
+            // For Trace logs
+            long b2 = System.currentTimeMillis();
+            
             long draftCount = 0;
             if (isEsEnabled) {
                 // ES query
@@ -82,6 +101,7 @@ public class CheckinFolderishInfosProvider implements DocumentInformationsProvid
                     // Draft count
                     draftCount = draftsIds.getRows().size();
                 }
+                
             } else {
                 // VCS query
                 IterableQueryResult draftsRows = null;
@@ -99,12 +119,24 @@ public class CheckinFolderishInfosProvider implements DocumentInformationsProvid
                     }
                 }
             }
+            
+            if(log.isTraceEnabled()){
+                long e2 = System.currentTimeMillis();
+                log.trace(" [Drafts count]: " + String.valueOf(e2 - b2 + " ms"));
+            }
 
             // Store infos
             infos.put("draftCount", draftCount);
+        
+    }
+        
+        if(log.isTraceEnabled()){
+            long end = System.currentTimeMillis();
+            log.trace(": " + String.valueOf(end - begin) + " ms");
         }
 
         return infos;
+        
     }
 
 }

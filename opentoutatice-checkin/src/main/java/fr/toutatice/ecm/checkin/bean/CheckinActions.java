@@ -13,6 +13,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.Lock;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.VersioningOption;
@@ -72,8 +73,9 @@ public class CheckinActions implements Serializable {
         
         // Prepare bean to save data in Draft Folder
         String docName = pathSegmentService.generatePathSegment(draftDocBean);
-        PathRef draftFolderRef = checkinHelper.getDraftsFolderRef(documentManager, navigationContext);
-        draftDocBean.setPathInfo((String) draftFolderRef.reference(), docName);
+        String draftsFolderPath = checkinHelper.getDraftsFolderPath(documentManager, checkoutParentDoc);
+        
+        draftDocBean.setPathInfo(draftsFolderPath, docName);
         draftDocBean.addFacet(DRAFT_FACET);
         draftDocBean.addFacet(WEBID_DISABLED_FACET);
         
@@ -110,8 +112,8 @@ public class CheckinActions implements Serializable {
         DocumentModel checkinableDoc = documentManager.getDocument(checkinableDocBean.getRef());
 
         // Copy to keep lifecycle, versions (?), ...
-        PathRef draftFolderRef = checkinHelper.getDraftsFolderRef(documentManager, navigationContext);
-        DocumentModel draftDoc = documentManager.copy(checkinableDoc.getRef(), draftFolderRef, null); // note that webId has changed (createdByCopy event)
+        String draftsFolderId = checkinHelper.getDraftsFolderId(documentManager, checkinableDocBean);
+        DocumentModel draftDoc = documentManager.copy(checkinableDoc.getRef(), new IdRef(draftsFolderId), null); // note that webId has changed (createdByCopy event)
         
         // To be able to set draft schema property
         // FIXME: find other way than save?

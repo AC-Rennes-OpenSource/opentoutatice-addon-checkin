@@ -10,11 +10,11 @@ import static fr.toutatice.ecm.checkin.constants.CheckinConstants.CHECKINED_PARE
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.DocumentException;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.schema.FacetNames;
-import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.platform.userworkspace.api.UserWorkspaceService;
 import org.nuxeo.runtime.api.Framework;
 
@@ -152,41 +152,14 @@ public class DocumentCheckinHelper {
     }
     
     /**
-     * Gets draft folder reference (where documents are checkined).
-     * Creates Drafts folder it doesn't exist.
+     * Getter for id of User Workspace.
      * 
      * @param documentManager
      * @param currentDoc
-     * @return reference of draft folder.
+     * @return id of User Workspace
      */
-    public PathRef getDraftsFolderRef(CoreSession documentManager, DocumentModel currentDoc) {
-
-        DocumentModel userWorkspace = getUserWorkspace(documentManager, currentDoc);
-
-        PathRef draftFolderRef = new PathRef(userWorkspace.getPathAsString().concat("/")
-                .concat(CheckinConstants.DRAFTS));
-        if (!documentManager.exists(draftFolderRef)) {
-            createDraftsFolder(documentManager, userWorkspace);
-        } else {
-            DocumentModel draftFolder = documentManager.getDocument(draftFolderRef);
-            if(!draftFolder.hasFacet(FacetNames.HIDDEN_IN_NAVIGATION)){
-                draftFolder.addFacet(FacetNames.HIDDEN_IN_NAVIGATION);
-                documentManager.saveDocument(draftFolder);
-            }
-        }
-        return draftFolderRef;
-    }
-    
-    /**
-     * Gets draft folder reference (where documents are checkined).
-     * Creates Drafts folder it doesn't exist.
-     * 
-     * @param documentManager
-     * @param navigationContext
-     * @return reference of draft folder.
-     */
-    public PathRef getDraftsFolderRef(CoreSession documentManager, NavigationContext navigationContext) {
-        return getDraftsFolderRef(documentManager, navigationContext.getCurrentDocument());
+    public String getDraftsFolderId(CoreSession documentManager, DocumentModel currentDoc) {
+        return getDraftFolder(documentManager, currentDoc).getId();
     }
     
     /**
@@ -198,23 +171,58 @@ public class DocumentCheckinHelper {
      * @return
      */
     public String getDraftsFolderPath(CoreSession session, DocumentModel document){
-        PathRef draftFolder = getDraftsFolderRef(session, document);
-        return (String) draftFolder.reference();
+        return getDraftFolder(session, document).getPathAsString();
     }
 
+    /**
+     * Gets draft folder (where documents are checkedin).
+     * Creates it if it doesn't exist.
+     * 
+     * @param session
+     * @param currentDoc
+     * @param userWorkspace
+     * @return Drafts Folder.
+     */
+    public DocumentModel getDraftFolder(CoreSession session, DocumentModel currentDoc) {
+        // User worksapce
+        DocumentModel userWorkspace = getUserWorkspace(session, currentDoc);
+
+        // Drafts Folder
+        DocumentModel draftsFolder = null;
+        try {
+            draftsFolder = session.getChild(userWorkspace.getRef(), CheckinConstants.DRAFTS);
+        } catch (ClientException ce) {
+            // Create Drafts Folder
+            if (ce.getCause().getClass().isAssignableFrom(DocumentException.class)) {
+                draftsFolder = createDraftsFolder(session, userWorkspace);
+            }
+        }
+
+        // For compatibility
+        if (!draftsFolder.hasFacet(FacetNames.HIDDEN_IN_NAVIGATION)) {
+            draftsFolder.addFacet(FacetNames.HIDDEN_IN_NAVIGATION);
+            draftsFolder = session.saveDocument(draftsFolder);
+        }
+        
+        return draftsFolder;
+    }
+    
     /**
      * Creates Drafts folder.
      * 
      * @param documentManager
      * @param userWorkspace
+     * @return Drafts folder
      */
-    protected void createDraftsFolder(CoreSession documentManager, DocumentModel userWorkspace) {
+    protected DocumentModel createDraftsFolder(CoreSession documentManager, DocumentModel userWorkspace) {
         DocumentModel d = documentManager.createDocumentModel(
                 userWorkspace.getPathAsString(), CheckinConstants.DRAFTS, "Folder");
         d.setPropertyValue("dc:title", CheckinConstants.DRAFTS_TITLE);
+        
         DocumentModel draftFolder = documentManager.createDocument(d);
         draftFolder.addFacet(FacetNames.HIDDEN_IN_NAVIGATION);
-        documentManager.saveDocument(draftFolder);
+        
+        return documentManager.saveDocument(draftFolder);
     }
     
     /**
