@@ -29,7 +29,7 @@ public class CheckinLockInfosProvider extends DocumentLockInfosProviderImpl {
     @Override
     public Map<String, Object> fetchInfos(CoreSession coreSession,
             DocumentModel currentDocument) throws ClientException {
-        // PERF
+        // For Trace logs
         long begin = System.currentTimeMillis();
 
         Map<String, Object> lockInfos = super.fetchInfos(coreSession, currentDocument);
@@ -49,9 +49,10 @@ public class CheckinLockInfosProvider extends DocumentLockInfosProviderImpl {
         
         }
         
-        // PERF
-        long end = System.currentTimeMillis();
-        log.info(": " + String.valueOf(end - begin) + " ms");
+        if (log.isTraceEnabled()) {
+            long end = System.currentTimeMillis();
+            log.trace(": " + String.valueOf(end - begin) + " ms");
+        }
         
         return lockInfos;
         
