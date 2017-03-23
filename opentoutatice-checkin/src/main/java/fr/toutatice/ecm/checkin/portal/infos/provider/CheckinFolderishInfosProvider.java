@@ -70,8 +70,8 @@ public class CheckinFolderishInfosProvider implements DocumentInformationsProvid
             // For Trace logs
             long b1 = System.currentTimeMillis();
             
-            // Draft folder path
-            String draftsFolderPath = DocumentCheckinHelper.getInstance().getDraftsFolderPath(coreSession, currentDocument);
+            // Draft folder id
+            String draftsFolderId = DocumentCheckinHelper.getInstance().getDraftsFolderId(coreSession, currentDocument);
             
             if(log.isTraceEnabled()){
                 long e1 = System.currentTimeMillis();
@@ -83,7 +83,7 @@ public class CheckinFolderishInfosProvider implements DocumentInformationsProvid
             // Query
             StringBuilder query = new StringBuilder();
             query.append("SELECT ecm:uuid FROM Document ");
-            query.append("WHERE ecm:path STARTSWITH '").append(draftsFolderPath).append("' ");
+            query.append("WHERE ecm:parentId = '").append(draftsFolderId).append("' ");
             query.append("AND ecm:currentLifeCycleState <> 'deleted' ");
             query.append("AND ottcDft:checkoutParentId = '").append(checkoutParentId).append("' ");
             

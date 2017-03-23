@@ -11,8 +11,8 @@
 	<version>3.4.0-SNAPSHOT</version>
 
 	<properties>
-		<nuxeo.version>6.0-HF30</nuxeo.version>
-		<nuxeo.opentoutatice.version>3.4.0-RC08</nuxeo.opentoutatice.version>
+		<nuxeo.version>6.0-HF34</nuxeo.version>
+		<nuxeo.opentoutatice.version>3.4.3-SNAPSHOT</nuxeo.opentoutatice.version>
 	</properties>
 
 	<modules>
