@@ -12,8 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.DocumentException;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.model.NoSuchDocumentException;
 import org.nuxeo.ecm.core.schema.FacetNames;
 import org.nuxeo.ecm.platform.userworkspace.api.UserWorkspaceService;
 import org.nuxeo.runtime.api.Framework;
@@ -193,7 +193,7 @@ public class DocumentCheckinHelper {
             draftsFolder = session.getChild(userWorkspace.getRef(), CheckinConstants.DRAFTS);
         } catch (ClientException ce) {
             // Create Drafts Folder
-            if (ce.getCause().getClass().isAssignableFrom(DocumentException.class)) {
+            if (NoSuchDocumentException.class.isInstance(ce.getCause())) {
                 draftsFolder = createDraftsFolder(session, userWorkspace);
             }
         }
