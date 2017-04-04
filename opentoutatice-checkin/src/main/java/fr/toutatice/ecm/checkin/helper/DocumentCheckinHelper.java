@@ -218,7 +218,13 @@ public class DocumentCheckinHelper {
         DocumentModel d = documentManager.createDocumentModel(
                 userWorkspace.getPathAsString(), CheckinConstants.DRAFTS, "Folder");
         d.setPropertyValue("dc:title", CheckinConstants.DRAFTS_TITLE);
+        String webid = CheckinConstants.DRAFTS + "_" + documentManager.getPrincipal().getName();
         
+        // Par sécurité, les _ présents dans les logins sont remplacés.
+        webid = webid.replace("_", "-");
+        
+		d.setPropertyValue("ttc:webid", webid);
+		
         DocumentModel draftFolder = documentManager.createDocument(d);
         draftFolder.addFacet(FacetNames.HIDDEN_IN_NAVIGATION);
         
