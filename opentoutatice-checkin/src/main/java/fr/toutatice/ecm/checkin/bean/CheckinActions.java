@@ -128,7 +128,7 @@ public class CheckinActions implements Serializable {
         ToutaticeDocumentHelper.saveDocumentSilently(documentManager, draftDoc, false);
 
         // To fill draft document with checkinableDocBean data
-        checkinableDocBean.setPathInfo(DocumentHelper.getParentPath(draftDoc), draftDoc.getName());
+        checkinableDocBean.setPathInfo(DocumentHelper.getParentPath(documentManager, draftDoc), draftDoc.getName());
         // To be able to write all properties, not the current modified ones only
         //checkinableDocBean = DocumentHelper.setDirty(checkinableDocBean); Not needed??
 
@@ -197,7 +197,7 @@ public class CheckinActions implements Serializable {
     		DocumentModel checkinedDoc = WebIdResolver.getLiveDocumentByWebId(
     				documentManager, checkinedDocId);
     		
-    		draftBean.setPathInfo(DocumentHelper.getParentPath(checkinedDoc), checkinedDoc.getName());
+            draftBean.setPathInfo(DocumentHelper.getParentPath(documentManager, checkinedDoc), checkinedDoc.getName());
     		draftBean.putContextData(VersioningService.VERSIONING_OPTION, VersioningOption.MINOR);
     		
     		// Editorial save

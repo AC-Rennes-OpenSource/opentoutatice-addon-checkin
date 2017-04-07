@@ -53,11 +53,20 @@ public class DocumentHelper {
     }
     
     /**
+     * Getter for parent path of document.
+     * 
      * @param document
      * @return parent path of document.
      */
-    public static String getParentPath(DocumentModel document){
-        return StringUtils.substringBefore(document.getPathAsString(), "/".concat(document.getName()));
+    public static String getParentPath(CoreSession session, DocumentModel document) {
+        DocumentRef parentRef = document.getParentRef();
+        DocumentModel parent = session.getDocument(parentRef);
+
+        if (parent != null) {
+            return parent.getPathAsString();
+        }
+
+        return null;
     }
     
     /**
@@ -75,7 +84,7 @@ public class DocumentHelper {
             return getId(parent);
         }
         
-        return StringUtils.EMPTY;
+        return null;
     }
     
     /**
