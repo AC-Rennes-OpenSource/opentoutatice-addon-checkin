@@ -19,7 +19,7 @@
             <event>aboutToRemove</event>
         </listener>
         
-       <listener name="ottcDeleteFolderishDraftsListener" async="false" postCommit="false" enabled="true"
+       <listener name="ottcFolderishInfosDraftsListener" async="false" postCommit="false" enabled="true"
             class="fr.toutatice.ecm.checkin.listener.FolderishInfosListener" priority="150">
             <event>aboutToRemove</event>    
         </listener> 

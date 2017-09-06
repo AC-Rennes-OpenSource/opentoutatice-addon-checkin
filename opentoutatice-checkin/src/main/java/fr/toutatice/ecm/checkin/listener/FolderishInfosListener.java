@@ -15,10 +15,10 @@ import org.nuxeo.ecm.core.api.event.DocumentEventTypes;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
-import org.nuxeo.ecm.core.query.sql.NXQL;
 
 import fr.toutatice.ecm.checkin.helper.DraftsQueryHelper;
 import fr.toutatice.ecm.platform.core.constants.ToutaticeNuxeoStudioConst;
+import fr.toutatice.ecm.platform.core.query.helper.ToutaticeEsQueryHelper;
 
 
 /**
@@ -66,7 +66,8 @@ public class FolderishInfosListener implements EventListener {
                 .append(currentWebId)
                 .append("'");
         
-        IterableQueryResult results = session.queryAndFetch(String.format(DELETED_FOLDERISH_WEBIDS_QUERY, srcDoc.getId()), NXQL.NXQL, new Object[0]);
+        IterableQueryResult results = ToutaticeEsQueryHelper.unrestrictedQueryAndAggregate(session,
+                String.format(DELETED_FOLDERISH_WEBIDS_QUERY, srcDoc.getId()));
         if(results != null){
             
             Iterator<Map<String, Serializable>> iterator = results.iterator();
