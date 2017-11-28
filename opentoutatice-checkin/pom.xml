@@ -12,7 +12,7 @@
 	<name>Checkin of documents</name>
 
 	<properties>
-		<nuxeo.version>6.0-HF30</nuxeo.version>
+		<nuxeo.version>6.0-HF42</nuxeo.version>
 	</properties>
 
     <build>
