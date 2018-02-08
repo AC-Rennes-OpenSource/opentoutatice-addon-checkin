@@ -6,11 +6,11 @@ package fr.toutatice.ecm.checkin.listener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.LifeCycleConstants;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.event.DocumentEventTypes;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventBundle;
@@ -33,7 +33,7 @@ public class AsyncFolderishListener implements PostCommitFilteringEventListener 
 
     /** Logger. */
     public static Log log = LogFactory.getLog(AsyncFolderishListener.class);
-    
+
     /** Trash service. */
     private static TrashService trashService;
 
@@ -44,31 +44,31 @@ public class AsyncFolderishListener implements PostCommitFilteringEventListener 
         }
         return trashService;
     }
-    
+
     /** Delete transition indicator. */
     private boolean isDeletion = false;
     /** Undelete transition indicator. */
     private boolean isUndeletion = false;
     /** Removed indocator. */
     private boolean isRemoved = false;
-    
+
     /**
      * Accepts only deleted transition event.
      */
     @Override
     public boolean acceptEvent(Event event) {
-        
+
         if (event.getContext() instanceof DocumentEventContext) {
             DocumentEventContext docCtx = (DocumentEventContext) event.getContext();
-            
-            if(DocumentEventTypes.DOCUMENT_REMOVED.equals(event.getName())){
+
+            if (DocumentEventTypes.DOCUMENT_REMOVED.equals(event.getName())) {
                 this.isRemoved = true;
                 return this.isRemoved;
             }
-            
+
             this.isDeletion = TransitionHelper.isTransition(docCtx, event, LifeCycleConstants.DELETE_TRANSITION);
             this.isUndeletion = TransitionHelper.isTransition(docCtx, event, LifeCycleConstants.UNDELETE_TRANSITION);
-            
+
             return this.isDeletion || this.isUndeletion;
         }
         return false;
@@ -79,21 +79,21 @@ public class AsyncFolderishListener implements PostCommitFilteringEventListener 
      * is trashed.
      */
     @Override
-    public void handleEvent(EventBundle events) throws ClientException {
+    public void handleEvent(EventBundle events) throws NuxeoException {
         for (Event event : events) {
-                
-                DocumentEventContext docCtx = (DocumentEventContext) event.getContext();
-                DocumentModel srcDoc = docCtx.getSourceDocument();
-                CoreSession session = docCtx.getCoreSession();
 
-                if (srcDoc != null && srcDoc.isFolder()) {
-                    if(LifeCycleConstants.TRANSITION_EVENT.equals(event.getName())){
-                        deleteOrRestoreOrphansDrafts(session, srcDoc);
-                    } else if(this.isRemoved){
-                        removeDrafts(docCtx, session, srcDoc);
-                    }
+            DocumentEventContext docCtx = (DocumentEventContext) event.getContext();
+            DocumentModel srcDoc = docCtx.getSourceDocument();
+            CoreSession session = docCtx.getCoreSession();
+
+            if (srcDoc != null && srcDoc.isFolder()) {
+                if (LifeCycleConstants.TRANSITION_EVENT.equals(event.getName())) {
+                    deleteOrRestoreOrphansDrafts(session, srcDoc);
+                } else if (this.isRemoved) {
+                    removeDrafts(docCtx, session, srcDoc);
                 }
             }
+        }
     }
 
     /**
@@ -112,26 +112,26 @@ public class AsyncFolderishListener implements PostCommitFilteringEventListener 
             session.save();
         }
     }
-    
+
     /**
      * Remove Drafts of Folder.
      * 
      * @param session
      * @param folder
      */
-    protected void removeDrafts (DocumentEventContext docCtx, CoreSession session, DocumentModel folder){
-        // Property get from ToutaticeDeleteEventListener
+    protected void removeDrafts(DocumentEventContext docCtx, CoreSession session, DocumentModel folder) {
+        // Property get from FolderishInfosListener
         String parentIdList = (String) docCtx.getProperty(DraftsQueryHelper.PARENT_CHECKOUT_IDS_LIST);
-        if (StringUtils.isNotBlank(parentIdList)){
+        if (StringUtils.isNotBlank(parentIdList)) {
             DocumentModelList drafts = session.query(String.format(DraftsQueryHelper.DRAFTS_QUERY_OF, parentIdList));
-            if(drafts.size() > 0){
-                for(DocumentModel draft : drafts){
+            if (drafts.size() > 0) {
+                for (DocumentModel draft : drafts) {
                     ToutaticeDocumentHelper.removeDocumentSilently(session, draft, false);
                 }
                 session.save();
             }
         }
-        
+
     }
 
 }

@@ -14,7 +14,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
@@ -39,7 +39,7 @@ public class CheckinInfosProvider implements DocumentInformationsProvider {
 	 */
 	@Override
 	public Map<String, Object> fetchInfos(CoreSession coreSession,
-			DocumentModel currentDocument) throws ClientException {
+			DocumentModel currentDocument) throws NuxeoException {
         // For Trace logs
 	    long begin = System.currentTimeMillis();
 		
@@ -62,7 +62,7 @@ public class CheckinInfosProvider implements DocumentInformationsProvider {
 				try {
 					infos.put("draftPath", URLEncoder.encode(draftPath, "UTF-8") );
 				} catch (UnsupportedEncodingException e) {
-				    throw new ClientException(e);
+				    throw new NuxeoException(e);
 				}
 			}
 		}
