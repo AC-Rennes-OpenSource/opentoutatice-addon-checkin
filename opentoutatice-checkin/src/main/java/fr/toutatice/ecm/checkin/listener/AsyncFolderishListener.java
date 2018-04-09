@@ -108,6 +108,10 @@ public class AsyncFolderishListener implements PostCommitFilteringEventListener 
         if (orphanDrafts.size() > 0) {
             for (DocumentModel orphan : orphanDrafts) {
                 session.followTransition(orphan, TransitionHelper.getTransitionName(this.isDeletion));
+
+                if (log.isDebugEnabled()) {
+                    log.debug("[Orphan Draft]: " + orphan.getPathAsString() + " : " + TransitionHelper.getTransitionName(this.isDeletion));
+                }
             }
             session.save();
         }
@@ -127,6 +131,10 @@ public class AsyncFolderishListener implements PostCommitFilteringEventListener 
             if (drafts.size() > 0) {
                 for (DocumentModel draft : drafts) {
                     ToutaticeDocumentHelper.removeDocumentSilently(session, draft, false);
+
+                    if (log.isDebugEnabled()) {
+                        log.debug("[Draft]: " + draft.getPathAsString() + " : deleted");
+                    }
                 }
                 session.save();
             }

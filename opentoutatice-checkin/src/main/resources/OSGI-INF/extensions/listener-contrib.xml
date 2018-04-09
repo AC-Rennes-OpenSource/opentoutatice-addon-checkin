@@ -24,11 +24,11 @@
             <event>aboutToRemove</event>    
         </listener> 
         
-        <listener name="ottcDeleteAsyncFolderishDraftsListener" async="true" postCommit="true" enabled="true"
+       <listener name="ottcDeleteAsyncFolderishDraftsListener" async="true" postCommit="true" enabled="true"
             class="fr.toutatice.ecm.checkin.listener.AsyncFolderishListener" priority="170">
             <event>lifecycle_transition_event</event>
             <event>documentRemoved</event>
-        </listener> 
+        </listener>  
 
     </extension>
 

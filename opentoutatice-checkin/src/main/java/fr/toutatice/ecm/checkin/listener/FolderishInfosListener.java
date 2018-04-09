@@ -3,19 +3,18 @@
  */
 package fr.toutatice.ecm.checkin.listener;
 
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.Map;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.event.DocumentEventTypes;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.elasticsearch.api.ElasticSearchService;
+import org.nuxeo.elasticsearch.api.EsIterableQueryResultImpl;
+import org.nuxeo.elasticsearch.api.EsScrollResult;
 import org.nuxeo.runtime.api.Framework;
 
 import fr.toutatice.ecm.checkin.helper.DraftsQueryHelper;
@@ -28,6 +27,8 @@ import fr.toutatice.ecm.platform.core.query.helper.ToutaticeEsQueryHelper;
  *
  */
 public class FolderishInfosListener implements EventListener {
+
+    private static final Log log = LogFactory.getLog(FolderishInfosListener.class);
 
     /** Folderish webIds request. */
     private static final String DELETED_FOLDERISH_WEBIDS_QUERY = "select ttc:webid from Document where ecm:mixinType = 'Folderish' "
@@ -75,31 +76,27 @@ public class FolderishInfosListener implements EventListener {
         String currentWebId = (String) srcDoc.getPropertyValue(ToutaticeNuxeoStudioConst.CST_DOC_SCHEMA_TOUTATICE_WEBID);
         StringBuffer wIds = new StringBuffer().append("('").append(currentWebId).append("'");
 
-        IterableQueryResult results = ToutaticeEsQueryHelper.unrestrictedQueryAndAggregate(session,
-                String.format(DELETED_FOLDERISH_WEBIDS_QUERY, srcDoc.getId()));
+        EsScrollResult scrollResult = ToutaticeEsQueryHelper.unrestrictedScroll(session, String.format(DELETED_FOLDERISH_WEBIDS_QUERY, srcDoc.getId()));
+        EsIterableQueryResultImpl iterable = new EsIterableQueryResultImpl(getEss(), scrollResult);
 
-        while (results.size() > 0) {
+        while (iterable.hasNext()) {
+            wIds.append(",'");
 
-            Iterator<Map<String, Serializable>> iterator = results.iterator();
+            String webId = (String) iterable.next().get(ToutaticeNuxeoStudioConst.CST_DOC_SCHEMA_TOUTATICE_WEBID);
+            wIds.append(webId);
 
-            while (iterator.hasNext()) {
-                wIds.append(",'");
+            wIds.append("'");
 
-                String webId = (String) iterator.next().get(ToutaticeNuxeoStudioConst.CST_DOC_SCHEMA_TOUTATICE_WEBID);
-                wIds.append(webId);
-
-                wIds.append("'");
-            }
-
-            results.close();
-
-            // Next scroll Result
-            results = ToutaticeEsQueryHelper.unrestrictedQueryAndAggregate(session, String.format(DELETED_FOLDERISH_WEBIDS_QUERY, srcDoc.getId()));
         }
+        iterable.close();
 
         wIds.append(")");
 
         docCtx.setProperty(DraftsQueryHelper.PARENT_CHECKOUT_IDS_LIST, wIds.toString());
+
+        if (log.isDebugEnabled()) {
+            log.debug("Folderish to remove: " + wIds.toString());
+        }
     }
 
 
