@@ -10,10 +10,9 @@ import static fr.toutatice.ecm.checkin.constants.CheckinConstants.CHECKINED_PARE
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.model.NoSuchDocumentException;
+import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.ecm.core.schema.FacetNames;
 import org.nuxeo.ecm.platform.userworkspace.api.UserWorkspaceService;
 import org.nuxeo.runtime.api.Framework;
@@ -28,13 +27,13 @@ import fr.toutatice.ecm.platform.service.url.WebIdResolver;
  *
  */
 public class DocumentCheckinHelper {
-    
+
     /** Logger. */
     private static final Log log = LogFactory.getLog(DocumentCheckinHelper.class);
-    
+
     /** Singleton instance. */
     private static DocumentCheckinHelper instance;
-    
+
     /** UserWorkspace service. */
     private static UserWorkspaceService uwService;
 
@@ -44,113 +43,113 @@ public class DocumentCheckinHelper {
     private DocumentCheckinHelper() {
         super();
     }
-    
+
     /**
      * @return singleton instance.
      */
-    public static synchronized DocumentCheckinHelper getInstance(){
-        if(instance == null){
+    public static synchronized DocumentCheckinHelper getInstance() {
+        if (instance == null) {
             instance = new DocumentCheckinHelper();
         }
         return instance;
     }
-    
-    public static UserWorkspaceService getUserWorkspaceService(){
-        if(uwService == null){
+
+    public static UserWorkspaceService getUserWorkspaceService() {
+        if (uwService == null) {
             uwService = Framework.getService(UserWorkspaceService.class);
         }
         return uwService;
     }
-    
+
     /**
      * @param document
      * @return true if document is a draft.
      */
-    public boolean isDraft(DocumentModel document){
+    public boolean isDraft(DocumentModel document) {
         return document.hasFacet(CheckinConstants.DRAFT_FACET);
     }
-    
+
     /**
      * @param document
      * @return true if document has a draft.
      */
-    public boolean hasDraft(DocumentModel document){
+    public boolean hasDraft(DocumentModel document) {
         return document.hasFacet(CheckinConstants.CHECKINED_IN_FACET);
     }
-    
+
     /**
      * @param draft
      * @return checkout parent webId.
      */
-    public String getCheckinedParentId(DocumentModel draft){
-        if(draft != null){
+    public String getCheckinedParentId(DocumentModel draft) {
+        if (draft != null) {
             return (String) draft.getPropertyValue(CheckinConstants.CHECKINED_PARENT_ID);
         }
         return StringUtils.EMPTY;
     }
-    
+
     /**
      * Sets checkouted parent webId of draft.
      * 
      * @param draft
      * @param checkinedParent
      */
-    public void setCheckinedParentId(DocumentModel draft, DocumentModel checkinedParent){
-        if(draft != null && checkinedParent != null){
+    public void setCheckinedParentId(DocumentModel draft, DocumentModel checkinedParent) {
+        if (draft != null && checkinedParent != null) {
             String checkinedParentId = DocumentHelper.getId(checkinedParent);
             draft.setPropertyValue(CHECKINED_PARENT_ID, checkinedParentId);
         }
     }
-    
+
     /**
      * @param draft
      * @return chekinedId property of draft.
      */
-    public String getCheckinedId(DocumentModel draft){
-        if(draft != null){
+    public String getCheckinedId(DocumentModel draft) {
+        if (draft != null) {
             String checkinedId = (String) draft.getPropertyValue(CheckinConstants.CHECKINED_DOC_ID);
             return StringUtils.isNotBlank(checkinedId) ? checkinedId : StringUtils.EMPTY;
         }
         return StringUtils.EMPTY;
     }
-    
+
     /**
      * Store checkined document webId in draft.
      * 
      * @param draft
      * @param checkinedDoc
      */
-    public void setCheckinedDocId(DocumentModel draft, DocumentModel checkinedDoc){
+    public void setCheckinedDocId(DocumentModel draft, DocumentModel checkinedDoc) {
         // FIXME: test OttcDraft schema and adds it if not there?
-        if(draft != null && checkinedDoc != null){
+        if (draft != null && checkinedDoc != null) {
             String checkinedDocId = DocumentHelper.getId(checkinedDoc);
             draft.setPropertyValue(CHECKINED_DOC_ID, checkinedDocId);
         }
     }
-    
-    
+
+
     /**
      * @param session
      * @param draft
      * @return true if draft has a checkined document.
      */
-    public boolean hasCheckinedDoc(CoreSession session, DocumentModel draft){
+    public boolean hasCheckinedDoc(CoreSession session, DocumentModel draft) {
         String checkinedId = DocumentHelper.getCheckinedIdOfDraftDoc(draft);
         DocumentModel checkinedDoc = WebIdResolver.getLiveDocumentByWebId(session, checkinedId);
         return checkinedDoc != null && checkinedDoc.hasFacet(CHECKINED_IN_FACET);
     }
-    
+
     /**
      * Get Draft document.
      * 
      * @param checkinedDoc
      * @return Draft document
      */
-    public DocumentModel getDraftDoc(CoreSession session, DocumentModel checkinedDoc){
+    public DocumentModel getDraftDoc(CoreSession session, DocumentModel checkinedDoc) {
         String draftId = DocumentHelper.getDraftIdFromCheckinedDoc(checkinedDoc);
         return WebIdResolver.getLiveDocumentByWebId(session, draftId);
     }
-    
+
     /**
      * Getter for id of User Workspace.
      * 
@@ -161,7 +160,7 @@ public class DocumentCheckinHelper {
     public String getDraftsFolderId(CoreSession documentManager, DocumentModel currentDoc) {
         return getDraftFolder(documentManager, currentDoc).getId();
     }
-    
+
     /**
      * Gets draft path (where documents are checkined).
      * Creates Drafts folder if it doesn't exist.
@@ -170,7 +169,7 @@ public class DocumentCheckinHelper {
      * @param document
      * @return
      */
-    public String getDraftsFolderPath(CoreSession session, DocumentModel document){
+    public String getDraftsFolderPath(CoreSession session, DocumentModel document) {
         return getDraftFolder(session, document).getPathAsString();
     }
 
@@ -191,22 +190,20 @@ public class DocumentCheckinHelper {
         DocumentModel draftsFolder = null;
         try {
             draftsFolder = session.getChild(userWorkspace.getRef(), CheckinConstants.DRAFTS);
-        } catch (ClientException ce) {
+        } catch (DocumentNotFoundException ne) {
             // Create Drafts Folder
-            if (NoSuchDocumentException.class.isInstance(ce.getCause())) {
-                draftsFolder = createDraftsFolder(session, userWorkspace);
-            }
+            draftsFolder = createDraftsFolder(session, userWorkspace);
         }
 
         // For compatibility
-        if (!draftsFolder.hasFacet(FacetNames.HIDDEN_IN_NAVIGATION)) {
+        if (draftsFolder != null && !draftsFolder.hasFacet(FacetNames.HIDDEN_IN_NAVIGATION)) {
             draftsFolder.addFacet(FacetNames.HIDDEN_IN_NAVIGATION);
             draftsFolder = session.saveDocument(draftsFolder);
         }
-        
+
         return draftsFolder;
     }
-    
+
     /**
      * Creates Drafts folder.
      * 
@@ -215,31 +212,30 @@ public class DocumentCheckinHelper {
      * @return Drafts folder
      */
     protected DocumentModel createDraftsFolder(CoreSession documentManager, DocumentModel userWorkspace) {
-        DocumentModel d = documentManager.createDocumentModel(
-                userWorkspace.getPathAsString(), CheckinConstants.DRAFTS, "Folder");
+        DocumentModel d = documentManager.createDocumentModel(userWorkspace.getPathAsString(), CheckinConstants.DRAFTS, "Folder");
         d.setPropertyValue("dc:title", CheckinConstants.DRAFTS_TITLE);
-        
+
         // WebId: robustness on suffix
         String suffix = StringUtils.replace(documentManager.getPrincipal().getName(), "_", "-");
         String webid = CheckinConstants.DRAFTS + "_" + suffix;
-        
-		d.setPropertyValue("ttc:webid", webid);
-		
+
+        d.setPropertyValue("ttc:webid", webid);
+
         DocumentModel draftFolder = documentManager.createDocument(d);
         draftFolder.addFacet(FacetNames.HIDDEN_IN_NAVIGATION);
-        
+
         return documentManager.saveDocument(draftFolder);
     }
-    
+
     /**
      * @param session
      * @param currentDocument
      * @return User Workspace
      */
-    protected DocumentModel getUserWorkspace(CoreSession session, DocumentModel currentDocument){
+    protected DocumentModel getUserWorkspace(CoreSession session, DocumentModel currentDocument) {
         return getUserWorkspaceService().getCurrentUserPersonalWorkspace(session, currentDocument);
     }
-    
+
     /**
      * Restore state of checkined document.
      * 
@@ -270,7 +266,7 @@ public class DocumentCheckinHelper {
     public void restoreCheckinedDoc(CoreSession session, DocumentModel checkinedDoc) {
         removeDraftInfosOn(session, checkinedDoc);
     }
-    
+
     /**
      * Remove Draft infos on checkined document.
      * 
