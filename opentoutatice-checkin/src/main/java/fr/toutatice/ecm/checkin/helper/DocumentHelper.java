@@ -13,9 +13,9 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DataModel;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.opentoutatice.core.logical.uid.resolver.WebIdResolver;
 
 import fr.toutatice.ecm.checkin.constants.CheckinConstants;
-import fr.toutatice.ecm.platform.service.url.WebIdResolver;
 
 
 /**

@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<div class="container">
+		<div
+			class="form-group #{nxu:test(hasStateIndicator, 'col-sm-10', 'col-sm-12')}">
+			<h3>
+				<h:outputText value="#{title}" />
+			</h3>
+		</div>
+
+		<h:panelGroup rendered="#{hasStateIndicator}">
+			<div class="col-sm-2">
+				<h4>
+					<span class="pull-right"> <span class="label label-info">
+							<i class="glyphicons glyphicons-notes visible-xs-inline-block"></i>
+							<span>#{stateIndicatorLabel}</span>
+					</span>
+					</span>
+				</h4>
+			</div>
+		</h:panelGroup>
+
+	</div>
+
+</ui:composition>

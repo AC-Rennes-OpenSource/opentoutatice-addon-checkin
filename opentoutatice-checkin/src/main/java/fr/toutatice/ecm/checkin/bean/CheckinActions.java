@@ -21,13 +21,13 @@ import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.webapp.contentbrowser.DocumentActionsBean;
+import org.opentoutatice.core.logical.uid.resolver.WebIdResolver;
 
 import fr.toutatice.ecm.checkin.constants.CheckinConstants;
 import fr.toutatice.ecm.checkin.helper.DocumentCheckinHelper;
 import fr.toutatice.ecm.checkin.helper.DocumentHelper;
 import fr.toutatice.ecm.platform.core.constants.PortalConstants;
 import fr.toutatice.ecm.platform.core.helper.ToutaticeDocumentHelper;
-import fr.toutatice.ecm.platform.service.url.WebIdResolver;
 import fr.toutatice.ecm.platform.web.document.ToutaticeDocumentActionsBean;
 import fr.toutatice.ecm.platform.web.fragments.PageBean;
 

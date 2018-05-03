@@ -1,0 +1,45 @@
+<ui:composition
+	template="/pages/portal-views/document/pv_mode_page.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:nxl="http://nuxeo.org/nxforms/layout"
+	xmlns:nxr="http://nuxeo.org/nxweb/resources">
+
+	<ui:param name="mode" value="edit" />
+	<ui:param name="document" value="#{currentDocument}" />
+
+	<ui:param name="title"
+		value="#{messages['toutatice.views.edit.title']} '#{currentDocument.title}'" />
+	<ui:param name="hasStateIndicator" value="#{checkinActions.isDraft()}" />
+	<ui:param name="stateIndicatorLabel"
+		value="#{messages['ottc.checkin.draft']}" />
+
+	<ui:define name="tabs titles">
+		<ul id="tabs" class="nav nav-tabs" role="tablist">
+			<!-- Main content tab -->
+			<li role="presentation" class="active"><a
+				aria-controls="content" role="tab" data-toggle="tab" href="#content">#{messages['content.tab.label']}</a></li>
+
+			<ui:include
+				src="/pages/portal-views/document/parts/tabs_titles.xhtml">
+				<ui:param name="tabs" value="#{tabs}" />
+			</ui:include>
+
+		</ul>
+	</ui:define>
+
+	<ui:define name="metadata tab">
+		<ui:include
+			src="/pages/portal-views/document/parts/metadata_tab.xhtml">
+			<ui:param name="groups" value="#{groups}" />
+			<ui:param name="tabId" value="#{tab.name}" />
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="actions">
+		<ui:include
+			src="/pages/portal-views/document/parts/edit_actions.xhtml" />
+	</ui:define>
+
+</ui:composition>

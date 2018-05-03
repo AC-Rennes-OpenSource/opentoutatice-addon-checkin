@@ -1,0 +1,70 @@
+<ui:composition template="/pages/portal-views/pv_page.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:nxl="http://nuxeo.org/nxforms/layout"
+	xmlns:nxr="http://nuxeo.org/nxweb/resources"
+	xmlns:nxu="http://nuxeo.org/nxweb/util">
+
+	<ui:define name="pv title">
+		<ui:include src="/pages/portal-views/parts/title.xhtml">
+			<ui:param name="title" value="#{title}" />
+			<ui:param name="hasStateIndicator" value="#{hasStateIndicator}" />
+			<ui:param name="stateIndicatorLabel" value="#{stateIndicatorLabel}" />
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="pv body">
+		<ui:insert name="pv form body">
+
+			<div class="container">
+
+				<ui:include src="/pages/portal-views/parts/message_banner.xhtml" />
+
+				<h:form enctype="multipart/form-data" id="document_#{mode}"
+					class="form form-horizontal" role="form">
+
+					<nxu:set var="tabs" value="#{metadataTabsBuilder.tabs}">
+
+						<ui:insert name="tabs titles" />
+
+						<div class="tab-content">
+							<div role="tabpanel" class="tab-pane active" id="content">
+								<nxl:documentLayout mode="#{mode}" value="#{document}"
+									template="/pages/portal-views/document/parts/content_tab.xhtml">
+									<ui:param name="tabId" value="content" />
+								</nxl:documentLayout>
+							</div>
+
+							<ui:repeat var="tab" value="#{tabs}">
+								<nxu:set var="groups" value="#{tab.groups}">
+									<ui:insert name="metadata tab" />
+								</nxu:set>
+							</ui:repeat>
+						</div>
+						
+					</nxu:set>
+
+					<ui:insert name="actions" />
+
+					<!-- FIXME !!! -->
+					<h:inputHidden name="fromUrl" value="#{pageBean.fromUrl}" />
+
+				</h:form>
+
+				<div class="pv-footer"></div>
+			</div>
+
+			<h:outputScript target="#{pageJsTarget}">
+				<!-- Resize on tab change -->
+	        jQuery(document).ready(function () {
+	            jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+	                parent.jQuery.fancybox.getInstance().update();
+	            });
+	        });
+		</h:outputScript>
+
+		</ui:insert>
+	</ui:define>
+
+</ui:composition>
