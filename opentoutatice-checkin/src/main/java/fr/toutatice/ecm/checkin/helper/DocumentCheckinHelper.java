@@ -133,8 +133,9 @@ public class DocumentCheckinHelper {
      * @param session
      * @param draft
      * @return true if draft has a checkined document.
+     * @throws NoSuchDocumentException 
      */
-    public boolean hasCheckinedDoc(CoreSession session, DocumentModel draft){
+    public boolean hasCheckinedDoc(CoreSession session, DocumentModel draft) throws NoSuchDocumentException{
         String checkinedId = DocumentHelper.getCheckinedIdOfDraftDoc(draft);
         DocumentModel checkinedDoc = WebIdResolver.getLiveDocumentByWebId(session, checkinedId);
         return checkinedDoc != null && checkinedDoc.hasFacet(CHECKINED_IN_FACET);
@@ -145,8 +146,9 @@ public class DocumentCheckinHelper {
      * 
      * @param checkinedDoc
      * @return Draft document
+     * @throws NoSuchDocumentException 
      */
-    public DocumentModel getDraftDoc(CoreSession session, DocumentModel checkinedDoc){
+    public DocumentModel getDraftDoc(CoreSession session, DocumentModel checkinedDoc) throws NoSuchDocumentException{
         String draftId = DocumentHelper.getDraftIdFromCheckinedDoc(checkinedDoc);
         return WebIdResolver.getLiveDocumentByWebId(session, draftId);
     }
@@ -245,8 +247,9 @@ public class DocumentCheckinHelper {
      * 
      * @param session
      * @param checkinedId
+     * @throws NoSuchDocumentException 
      */
-    public void restoreCheckinedDoc(CoreSession session, String checkinedId) {
+    public void restoreCheckinedDoc(CoreSession session, String checkinedId) throws NoSuchDocumentException {
 
         if (StringUtils.isNotEmpty(checkinedId)) {
             DocumentModel checkinedDoc = WebIdResolver.getLiveDocumentByWebId(session, checkinedId);

@@ -11,13 +11,13 @@
 	<version>4.6.1</version>
 
 	<properties>
-		<nuxeo.version>6.0-HF42</nuxeo.version>
-		<nuxeo.opentoutatice.version>4.6.5</nuxeo.opentoutatice.version>
+		<nuxeo.version>RAB-6.1.6-RC01</nuxeo.version>
+		<nuxeo.opentoutatice.version>RAB-4.7.44</nuxeo.opentoutatice.version>
 	</properties>
 
 	<modules>
 	   <module>opentoutatice-checkin</module> 
-	   <module>opentoutatice-checkin-marketplace</module>   
+	   <!-->module>opentoutatice-checkin-marketplace</module-->   
 	</modules>
 
 	<build>
@@ -25,13 +25,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.2.1</version>
-			 	<configuration>
-					<tagBase>http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice-addons/opentoutatice-checkin/tags</tagBase>
-					<releaseProfiles>unpack,pack</releaseProfiles>
-					<preparationGoals>clean install</preparationGoals>
-					<goals>deploy</goals>
-			      	</configuration>
+				<version>2.5.3</version>
 			</plugin>
 		</plugins>			
 		<pluginManagement>
@@ -47,19 +41,21 @@
 	</build>
 
 	<scm>
-		<developerConnection>scm:svn:http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice-addons/opentoutatice-checkin/tags/4.6.1</developerConnection>
+		<url>https://github.com/AC-Rennes-OpenSource/opentoutatice-addon-checkin</url>
+		<connection>scm:git:https://github.com/AC-Rennes-OpenSource/opentoutatice-addon-checkin.git</connection>
+		<developerConnection>scm:git:https://github.com/AC-Rennes-OpenSource/opentoutatice-addon-checkin.git</developerConnection>
+		<tag>HEAD</tag> 
 	</scm>
-
+	
 	<distributionManagement>
 		<repository>
-			<id>toutatice-releases</id>
-			<url>http://projet.toutatice.fr/nexus/content/repositories/toutatice-releases</url>
+			<id>${releaseRepoId}</id>
+			<url>${releaseRepoUrl}</url>
 		</repository>
 		<snapshotRepository>
-			<id>toutatice-snapshots</id>
-			<url>http://projet.toutatice.fr/nexus/content/repositories/toutatice-snapshots</url>
+			<id>${snapshotRepoId}</id>
+			<url>${snapshotRepoUrl}</url>
 		</snapshotRepository>
 	</distributionManagement>
 
 </project>
-

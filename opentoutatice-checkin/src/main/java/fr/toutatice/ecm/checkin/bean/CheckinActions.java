@@ -18,6 +18,7 @@ import org.nuxeo.ecm.core.api.Lock;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.VersioningOption;
 import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
+import org.nuxeo.ecm.core.model.NoSuchDocumentException;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.webapp.contentbrowser.DocumentActionsBean;
@@ -167,8 +168,9 @@ public class CheckinActions implements Serializable {
 	 * Checkout draft document (corresponding checkined document exists or not).
 	 * 
 	 * @return "done" Portal View id.
+	 * @throws NoSuchDocumentException 
 	 */
-	public String checkout() {
+	public String checkout() throws NoSuchDocumentException {
 	    DocumentModel draftBean = navigationContext.getCurrentDocument();
 	    DocumentModel checkoutedDoc = null;
 	    

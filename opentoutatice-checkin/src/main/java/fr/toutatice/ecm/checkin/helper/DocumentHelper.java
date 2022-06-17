@@ -13,6 +13,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DataModel;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.model.NoSuchDocumentException;
 
 import fr.toutatice.ecm.checkin.constants.CheckinConstants;
 import fr.toutatice.ecm.platform.service.url.WebIdResolver;
@@ -43,8 +44,9 @@ public class DocumentHelper {
      * @param session
      * @param webId
      * @return path from webId.
+     * @throws NoSuchDocumentException 
      */
-    public static String getPathFromId(CoreSession session, String webId){
+    public static String getPathFromId(CoreSession session, String webId) throws NoSuchDocumentException{
         DocumentModel document = WebIdResolver.getLiveDocumentByWebId(session, webId);
         if(document != null){
             return document.getPathAsString();

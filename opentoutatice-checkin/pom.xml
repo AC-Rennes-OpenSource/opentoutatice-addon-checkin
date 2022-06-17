@@ -11,9 +11,7 @@
 	<packaging>jar</packaging>
 	<name>Checkin of documents</name>
 
-	<properties>
-		<nuxeo.version>6.0-HF42</nuxeo.version>
-	</properties>
+	<properties/>
 
     <build>
         <plugins>
@@ -21,6 +19,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <source>1.7</source>
@@ -43,22 +42,9 @@
                 </configuration>
             </plugin>
             
-            <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.2.1</version>
-			 	<configuration>
-					<tagBase>http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice-addons/opentoutatice-checkin/tags</tagBase>
-					<releaseProfiles>unpack,pack</releaseProfiles>
-					<preparationGoals>clean install</preparationGoals>
-					<goals>deploy</goals>
-                </configuration>
-            </plugin>
-
         </plugins>
 
     </build>
-
 
 	<dependencies>
 	   <dependency>
