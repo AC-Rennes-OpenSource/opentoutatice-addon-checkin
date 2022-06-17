@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<component name="fr.toutatice.ecm.platform.checkin.actions">
+
+	<require>fr.toutatice.ecm.platform.checkin.types</require>
+
+	<extension target="org.nuxeo.ecm.platform.actions.ActionService"
+		point="actions">
+		
+		 <!-- Creation -->      
+        <action id="CREATE_N_CHECKIN_CURRENT_DOC" label="ottc.create.checkin.action"
+            link="#{checkinActions.createNCheckin()}" order="30" help="ottc.create.checkin.action.help">
+            <category>TOUTATICE_CREATE_DOCUMENT_FORM</category>
+            <filter-id>dont_belong_to_publish_space</filter-id>
+            <filter-id>creating_Note</filter-id>
+            <properties>
+                <property name="style">btn-default</property>
+            </properties>
+        </action>
+		
+		<!-- Checkin -->
+		<action id="CHECKIN_CURRENT_DOC" label="ottc.checkin.action"
+            link="#{checkinActions.checkin()}" order="30" help="ottc.checkin.action.help">
+            <category>TOUTATICE_EDIT_DOCUMENT_FORM</category>
+            <filter-id>dont_belong_to_publish_space</filter-id>
+            <filter-id>is_Note</filter-id>
+            <filter-id>is_not_draft_doc</filter-id>
+            <properties>
+                <property name="style">btn-default</property>
+            </properties>
+        </action>
+        
+		<!-- Checkout -->
+		<action id="CHECKOUT_CURRENT_DOC" label="ottc.checkout.action"
+            link="#{checkinActions.checkout()}" order="30" help="ottc.checkout.action.help">
+            <category>TOUTATICE_EDIT_DOCUMENT_FORM</category>
+			<filter-id>dont_belong_to_publish_space</filter-id>
+			<filter-id>is_draft_doc</filter-id>
+			<properties>
+                <property name="style">btn-default</property>
+            </properties>
+        </action>
+        
+	</extension>
+
+	<extension target="org.nuxeo.ecm.platform.actions.ActionService"
+		point="filters">
+
+		<filter id="is_draft_doc">
+			<rule grant="true">
+				<facet>OttcDraft</facet>
+			</rule>
+		</filter>
+		<filter id="is_not_draft_doc">
+			<rule grant="false">
+				<facet>OttcDraft</facet>
+			</rule>
+		</filter>	
+		
+		<!-- Restriction of Checkin to Note only (for the moment) -->
+		<filter id="creating_Note">
+		  <rule grant="true">
+		      <condition>#{changeableDocument.getType() == 'Note'}</condition>
+		  </rule>
+		</filter>
+		
+		<filter id="is_Note">
+            <rule grant="true">
+                <type>Note</type>
+            </rule>
+        </filter>
+			
+	</extension>
+</component>

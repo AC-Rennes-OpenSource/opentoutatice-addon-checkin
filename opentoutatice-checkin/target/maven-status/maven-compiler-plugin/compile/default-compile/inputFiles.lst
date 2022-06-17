@@ -1,0 +1,13 @@
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/helper/DraftsQueryHelper.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/helper/DocumentCheckinHelper.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/constants/CheckinConstants.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/listener/AsyncFolderishListener.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/helper/TransitionHelper.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/helper/DocumentHelper.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/listener/CheckinedListener.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/portal/infos/provider/CheckinLockInfosProvider.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/portal/infos/provider/CheckinFolderishInfosProvider.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/listener/DraftListener.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/bean/CheckinActions.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/portal/infos/provider/CheckinInfosProvider.java
+/var/jenkins_home/workspace/Toutatice/OpenToutatice/BuildTagAndPush/opentoutatice-checkin/src/main/java/fr/toutatice/ecm/checkin/listener/FolderishInfosListener.java

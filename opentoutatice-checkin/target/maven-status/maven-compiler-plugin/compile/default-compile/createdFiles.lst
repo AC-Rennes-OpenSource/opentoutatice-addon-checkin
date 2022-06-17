@@ -1,0 +1,13 @@
+fr/toutatice/ecm/checkin/portal/infos/provider/CheckinInfosProvider.class
+fr/toutatice/ecm/checkin/listener/CheckinedListener.class
+fr/toutatice/ecm/checkin/constants/CheckinConstants.class
+fr/toutatice/ecm/checkin/listener/DraftListener.class
+fr/toutatice/ecm/checkin/listener/AsyncFolderishListener.class
+fr/toutatice/ecm/checkin/helper/DocumentHelper.class
+fr/toutatice/ecm/checkin/portal/infos/provider/CheckinFolderishInfosProvider.class
+fr/toutatice/ecm/checkin/helper/DraftsQueryHelper.class
+fr/toutatice/ecm/checkin/helper/DocumentCheckinHelper.class
+fr/toutatice/ecm/checkin/listener/FolderishInfosListener.class
+fr/toutatice/ecm/checkin/bean/CheckinActions.class
+fr/toutatice/ecm/checkin/helper/TransitionHelper.class
+fr/toutatice/ecm/checkin/portal/infos/provider/CheckinLockInfosProvider.class

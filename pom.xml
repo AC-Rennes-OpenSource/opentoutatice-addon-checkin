@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 	<description>Addon to enable check-in documents in personnal workspace through portal</description>
 	<name>opentoutatice-ecm.checkin-parent</name>
-	<version>4.6.1</version>
+	<version>RAB-4.6.2</version>
 
 	<properties>
 		<nuxeo.version>RAB-6.1.6-RC01</nuxeo.version>

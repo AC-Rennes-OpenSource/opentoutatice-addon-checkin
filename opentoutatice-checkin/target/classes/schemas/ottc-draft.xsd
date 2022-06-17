@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/ottc/draft"
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/ottc/draft">
+    
+    <xs:element name="checkoutParentId" type="xs:string" default=""/>
+    <xs:element name="checkinedDocId" type="xs:string" default=""/>
+    
+</xs:schema>
