@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>opentoutatice-ecm.checkin</groupId>
 		<artifactId>opentoutatice-ecm-checkin-parent</artifactId>
-		<version>RAB-4.6.2</version>
+		<version>RAB-4.6.3-RC01-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>opentoutatice-addon-checkin-ecm</artifactId>
